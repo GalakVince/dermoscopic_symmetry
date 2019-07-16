@@ -61,7 +61,7 @@ def textureBasedClassifier():
     return (clf,acc)
 
 def finalClassifier():
-    """Train a random forest classifier with data from the "shapeAndTextureScores.csv" (creating merging shape scores
+    """Train a random forest classifier with data from the "shapeAndTextureScores.csv" (created by merging shape scores
        and texture scores) file following the expert diagnosis about symmetry (PH2 Dataset).
 
     # Outputs :
