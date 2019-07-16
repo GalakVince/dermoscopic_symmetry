@@ -88,14 +88,28 @@ def finalClassifier():
 
     return (clf,acc)
 
-clfShape, accShape = shapeBasedClassifier()
-clfTexture, accTexture = textureBasedClassifier()
-clfFinal, accFinal = finalClassifier()
+def modelsSaver():
+    """Use the trained random forests classifiers (based on shape, textures and both) and save the resulting models.
 
-joblib.dump(clfShape,"shapeModel.pkl")
-joblib.dump(clfTexture,"textureModel.pkl")
-joblib.dump(clfFinal,"shapeAndTextureModel.pkl")
+    # Outputs :
+        accShape:   The accuracy of the shape-based classifier.
+        accTexture: The accuracy of the textures-based classifier.
+        accFinal:   The accuracy of the both shape and textures based classifier.
+    """
 
-print(accShape)
-print(accTexture)
-print(accFinal)
+    clfShape, accShape = shapeBasedClassifier()
+    clfTexture, accTexture = textureBasedClassifier()
+    clfFinal, accFinal = finalClassifier()
+
+    joblib.dump(clfShape,"shapeModel.pkl")
+    joblib.dump(clfTexture,"textureModel.pkl")
+    joblib.dump(clfFinal,"shapeAndTextureModel.pkl")
+
+    return (accShape,accTexture,accFinal)
+
+#----------------EXAMPLE----------------------
+# accShape, accTexture, accFinal = modelsSaver()
+# print(accShape)
+# print(accTexture)
+# print(accFinal)
+#---------------------------------------------
