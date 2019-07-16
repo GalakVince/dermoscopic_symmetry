@@ -39,7 +39,7 @@ def shapeScoresSaver(ims, asymCoefs, stepAngle):
     df = pd.DataFrame({"Labels": labels})
     for k in range(int(180/stepAngle)+1):
         df["Shape score " + str(k)] = lists[k]
-    df.to_csv("../ShapeScores.csv")
+    df.to_csv("../../ShapeScores.csv")
 
     return 0
 
@@ -81,7 +81,7 @@ def textureScoresSaver(ims, asymCoefs, stepAngle):
     df = pd.DataFrame({"Labels": labels})
     for k in range(int(180/stepAngle)+1):
         df["Texture score " + str(k)] = lists[k]
-    df.to_csv("../TextureScores.csv")
+    df.to_csv("../../TextureScores.csv")
 
     return 0
 
