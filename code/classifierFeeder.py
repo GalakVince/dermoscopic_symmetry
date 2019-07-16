@@ -21,7 +21,7 @@ def aSimilarLoader(patchNumber):
         patch: The loaded patch.
     """
 
-    filename = "patchesDataSet/Similar/patch" + str(patchNumber) + "a.bmp"
+    filename = "../patchesDataSet/Similar/patch" + str(patchNumber) + "a.bmp"
     patch = imread(filename)
     return patch
 
@@ -35,7 +35,7 @@ def bSimilarLoader(patchNumber):
         patch: The loaded patch.
     """
 
-    filename = "patchesDataSet/Similar/patch" + str(patchNumber) + "b.bmp"
+    filename = "../patchesDataSet/Similar/patch" + str(patchNumber) + "b.bmp"
     patch = imread(filename)
     return patch
 
@@ -49,7 +49,7 @@ def aNonSimilarLoader(patchNumber):
         patch: The loaded patch.
     """
 
-    filename = "patchesDataSet/nonSimilar/patch" + str(patchNumber) + "a.bmp"
+    filename = "../patchesDataSet/nonSimilar/patch" + str(patchNumber) + "a.bmp"
     patch = imread(filename)
     return patch
 
@@ -63,7 +63,7 @@ def bNonSimilarLoader(patchNumber):
         patch: The loaded patch.
     """
 
-    filename = "patchesDataSet/nonSimilar/patch" + str(patchNumber) + "b.bmp"
+    filename = "../patchesDataSet/nonSimilar/patch" + str(patchNumber) + "b.bmp"
     patch = imread(filename)
     return patch
 
@@ -353,7 +353,7 @@ def dataExtractorForTraining(patchesPerImage, nbImages, nbBins):
 
     df["Result"] = resultList
 
-    df.to_csv("patchesDataSet/features.csv")
+    df.to_csv("../patchesDataSet/features.csv")
 
     return 0
 
@@ -370,7 +370,7 @@ def classifierTrainer(maxLeafNodes):
         acc: The accuracy score of the classifier
     """
 
-    data = pd.read_csv("patchesDataSet/features.csv")
+    data = pd.read_csv("../patchesDataSet/features.csv")
 
     features = list(data)
     del features[0]

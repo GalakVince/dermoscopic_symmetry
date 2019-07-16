@@ -13,7 +13,7 @@ def shapeBasedClassifier():
         acc: The accuracy score of the classifier
     """
 
-    data = pd.read_csv("ShapeScores.csv")
+    data = pd.read_csv("../ShapeScores.csv")
 
     features = list(data)
     del features[0]
@@ -41,7 +41,7 @@ def textureBasedClassifier():
         acc: The accuracy score of the classifier
     """
 
-    data = pd.read_csv("TextureScores.csv")
+    data = pd.read_csv("../TextureScores.csv")
 
     features = list(data)
     del features[0]
@@ -69,7 +69,7 @@ def finalClassifier():
         acc: The accuracy score of the classifier
     """
 
-    data = pd.read_csv("ShapeAndTextureScores.csv")
+    data = pd.read_csv("../ShapeAndTextureScores.csv")
 
     features = list(data)
     del features[0]
@@ -101,9 +101,9 @@ def modelsSaver():
     clfTexture, accTexture = textureBasedClassifier()
     clfFinal, accFinal = finalClassifier()
 
-    joblib.dump(clfShape,"shapeModel.pkl")
-    joblib.dump(clfTexture,"textureModel.pkl")
-    joblib.dump(clfFinal,"shapeAndTextureModel.pkl")
+    joblib.dump(clfShape,"../shapeModel.pkl")
+    joblib.dump(clfTexture,"../textureModel.pkl")
+    joblib.dump(clfFinal,"../shapeAndTextureModel.pkl")
 
     return (accShape,accTexture,accFinal)
 

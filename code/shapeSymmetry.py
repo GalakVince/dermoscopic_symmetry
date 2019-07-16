@@ -18,7 +18,7 @@ def pig2load(imNumber) :
         im: The loaded image.
     """
 
-    filename = "PH2Dataset/PH2 Dataset images/" + imNumber + "/" + imNumber + "_Dermoscopic_Image/" + imNumber + ".bmp"
+    filename = "../PH2Dataset/PH2 Dataset images/" + imNumber + "/" + imNumber + "_Dermoscopic_Image/" + imNumber + ".bmp"
     im = imread(filename)
     return im
 
@@ -32,7 +32,7 @@ def seg2load(imNumber) :
         im: The loaded image.
     """
 
-    filename = "PH2Dataset/PH2 Dataset images/" + imNumber + "/" + imNumber + "_lesion/" + imNumber + "_lesion.bmp"
+    filename = "../PH2Dataset/PH2 Dataset images/" + imNumber + "/" + imNumber + "_lesion/" + imNumber + "_lesion.bmp"
     im = imread(filename)
     return im
 

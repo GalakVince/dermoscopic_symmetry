@@ -339,7 +339,7 @@ def textureDataExtractor(im, segIm, patchSize, nbBins):
             df["blue " + str(k + 1 - 5*nbBins) + "/" + str(nbBins) + " b"] = lists[k]
 
     # Create .csv file
-    df.to_csv("patchesDataSet/features.csv")
+    df.to_csv("../patchesDataSet/features.csv")
 
     return (patchesUsed, points, reference)
 

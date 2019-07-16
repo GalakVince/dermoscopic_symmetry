@@ -21,7 +21,7 @@ def symmetryTexturePred(classifier):
         similarNum:    Int. The number of similar matches.
     """
 
-    data = pd.read_csv("patchesDataSet/features.csv")
+    data = pd.read_csv("../patchesDataSet/features.csv")
     features = list(data)
     del features[0]
 
