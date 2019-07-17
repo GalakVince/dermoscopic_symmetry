@@ -60,6 +60,14 @@ at the end aiming at showing how to use the designed functions. <br/>The code us
 patchesDataSet and the `*Scores.csv` files are given in the `code/datasetCreators` repository. Note that the 
 `ShapeAndTextureScores.csv` file had been handly created merging `ShapesScores.csv` and `TextureScores.csv`.
 
+**Note :** To use the `datasetCreators` functions, a `symtab.xlsx` file must be construct and add 
+to the same repository level as the `*.pkl` files are (package's top level). This file is
+an excel file containing two columns : the first contains all 
+the "Image Name" column of the `PH2_dataset.xlsx` file (available once the PH² Dataset has
+been downloaded) and the second one contains all the "Asymmetry"
+column of the `PH2_dataset.xlsx` file.
+
+
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)

@@ -89,7 +89,7 @@ def textureScoresSaver(ims, asymCoefs, stepAngle):
 #---------------EXAMPLE------------------------------
 # df = pd.read_excel("../../symtab.xlsx")
 # asymCoefs = df["Asymmetry"]
-# ims = df["Image number"]
+# ims = df["Image Name"]
 # shapeScoresSaver(ims,asymCoefs,9)
 # textureScoresSaver(ims,asymCoefs,9)
 #----------------------------------------------------

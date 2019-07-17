@@ -95,7 +95,7 @@ def datasetCreator(patchesPerImage, patchSize, overlap):
             """
 
     df = pd.read_excel("../../symtab.xlsx")
-    ims = df["Image number"]
+    ims = df["Image Name"]
     ims = list(ims)
 
     #---------------Creation of the "a" patches-----------------
