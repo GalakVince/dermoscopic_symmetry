@@ -9,7 +9,7 @@ and its global form whereas textures stand for colors and types of perceived tex
 See :
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Teresa Mendonça, Pedro M. Ferreira, Jorge Marques, Andre R. S. Marcal, 
-Jorge Rozeira. PH² - A dermoscopic image database for research and 
+Jorge Rozeira. PH² - A dermoscopic image &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;database for research and 
 benchmarking, 35th International Conference of the IEEE Engineering in 
 Medicine and Biology Society, July 3-7, 2013, Osaka, Japan.](https://ieeexplore.ieee.org/document/6610779?tp=&arnumber=6610779&url=http:%2F%2Fieeexplore.ieee.org%2Fxpls%2Fabs_all.jsp%3Farnumber%3D6610779)
 
