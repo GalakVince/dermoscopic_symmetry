@@ -1,7 +1,8 @@
-from textureSymmetry import *
-from shapeSymmetry import *
-
 import pandas as pd
+
+from code.shapeSymmetry import symmetryRatios, seg2load, pig2load
+from code.textureSymmetry import symmetryTextureEval
+
 
 def shapeScoresSaver(ims, asymCoefs, stepAngle):
     """Create a "shapeScores.csv" file containing all shape symmetry scores over angles for each image of the PH2
@@ -86,7 +87,7 @@ def textureScoresSaver(ims, asymCoefs, stepAngle):
     return 0
 
 #---------------EXAMPLE------------------------------
-# df = pd.read_excel("../PH2Dataset/symtab.xlsx")
+# df = pd.read_excel("../../symtab.xlsx")
 # asymCoefs = df["Asymmetry"]
 # ims = df["Image number"]
 # shapeScoresSaver(ims,asymCoefs,9)

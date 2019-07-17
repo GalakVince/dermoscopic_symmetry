@@ -6,8 +6,8 @@ from skimage.feature import *
 from skimage.color import *
 from skimage import img_as_ubyte
 
-from classifierFeeder import listCreator
-from shapeSymmetry import pig2load, seg2load
+from code.classifierFeeder import listCreator
+from code.shapeSymmetry import pig2load, seg2load
 
 import numpy as np
 import pandas as pd
@@ -346,5 +346,5 @@ def textureDataExtractor(im, segIm, patchSize, nbBins):
 #----------------EXAMPLE----------------------------------------------
 # im = pig2load("IMD400")
 # segIm = seg2load("IMD400")
-#patchesUsed, points, reference = textureDataExtractor(im, segIm, 32, 4)
+# patchesUsed, points, reference = textureDataExtractor(im, segIm, 32, 4)
 #---------------------------------------------------------------------

@@ -1,12 +1,16 @@
-from skimage import img_as_float64
+from skimage import img_as_float64, img_as_ubyte
+from skimage.draw import circle
+from skimage.measure import regionprops, find_contours
 from skimage.transform import *
 from skimage.filters import *
 
-from shapeSymmetry import pig2load, seg2load
-from classifierFeeder import *
-from patchesForSymmetry import *
-
+import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
+
+from code.classifierFeeder import classifierTrainer
+from code.patchesForSymmetry import textureDataExtractor
+
 
 def symmetryTexturePred(classifier):
     """Predict if symetric pairs of patches taken in a dermoscopic image are similar or not using features extracted

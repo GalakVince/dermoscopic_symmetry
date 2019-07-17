@@ -5,7 +5,7 @@ from skimage.segmentation import *
 from skimage.draw import *
 from skimage import img_as_ubyte
 
-from shapeSymmetry import seg2load,pig2load
+from code.shapeSymmetry import seg2load,pig2load
 
 import numpy as np
 import pandas as pd
@@ -94,7 +94,7 @@ def datasetCreator(patchesPerImage, patchSize, overlap):
                 exist.
             """
 
-    df = pd.read_excel("../../PH2Dataset/symtab.xlsx")
+    df = pd.read_excel("../../symtab.xlsx")
     ims = df["Image number"]
     ims = list(ims)
 
