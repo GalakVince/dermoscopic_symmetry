@@ -61,7 +61,7 @@ patchesDataSet and the `*Scores.csv` files are given in the `code/datasetCreator
 `ShapeAndTextureScores.csv` file had been handly created merging `ShapesScores.csv` and `TextureScores.csv`.
 
 **Note :** To use the `datasetCreators` functions, a `symtab.xlsx` file must be construct and add 
-to the same repository level as the `*.pkl` files are (package's top level). This file is
+to the same repository level as &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the `*.pkl` files are (package's top level). This file is
 an excel file containing two columns : the first contains all 
 the "Image Name" column of the `PH2_dataset.xlsx` file (available once the PH² Dataset has
 been downloaded) and the second one contains all the "Asymmetry"
