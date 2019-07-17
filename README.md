@@ -8,12 +8,12 @@ and its global form whereas textures stand for colors and types of perceived tex
 **Note :** The package has been built referring to the [PH² Dataset](https://www.fc.up.pt/addi/ph2%20database.html).
 See :
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Teresa Mendonça, Pedro M. Ferreira, Jorge Marques, Andre R. S. Marcal, 
-Jorge Rozeira. PH² - A dermoscopic image &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;database for research and 
+[Teresa Mendonça, Pedro M. Ferreira, Jorge Marques, Andre R. S. Marcal, 
+Jorge Rozeira. PH² - A dermoscopic image database for research and 
 benchmarking, 35th International Conference of the IEEE Engineering in 
-Medicine and &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Biology Society, July 3-7, 2013, Osaka, Japan.](https://ieeexplore.ieee.org/document/6610779?tp=&arnumber=6610779&url=http:%2F%2Fieeexplore.ieee.org%2Fxpls%2Fabs_all.jsp%3Farnumber%3D6610779)
+Medicine and Biology Society, July 3-7, 2013, Osaka, Japan.](https://ieeexplore.ieee.org/document/6610779?tp=&arnumber=6610779&url=http:%2F%2Fieeexplore.ieee.org%2Fxpls%2Fabs_all.jsp%3Farnumber%3D6610779)
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To be able to use it directly and properly, you must download and have 
+To be able to use it directly and properly, you must download and have 
 access to it.
  
  ## Installation
@@ -61,10 +61,10 @@ patchesDataSet and the `*Scores.csv` files are given in the `code/datasetCreator
 `ShapeAndTextureScores.csv` file had been handly created merging `ShapesScores.csv` and `TextureScores.csv`.
 
 **Note :** To use the `datasetCreators` functions, a `symtab.xlsx` file must be construct and add 
-to the same repository level as &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the `*.pkl` files are (package's top level). This file is
+to the same repository level as the `*.pkl` files are (package's top level). This file is
 an excel file containing two columns : the first contains all 
-the &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"Image Name" column of the `PH2_dataset.xlsx` file (available once the PH² Dataset has
-been downloaded) and the &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;second one contains all the "Asymmetry"
+the "Image Name" column of the `PH2_dataset.xlsx` file (available once the PH² Dataset has
+been downloaded) and the second one contains all the "Asymmetry"
 column of the `PH2_dataset.xlsx` file.
 
 
