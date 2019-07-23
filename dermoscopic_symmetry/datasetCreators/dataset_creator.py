@@ -1,5 +1,8 @@
+import shutil
 from random import randint, choice
 
+import numpy as np
+import pandas as pd
 from skimage import img_as_ubyte
 from skimage.draw import rectangle
 from skimage.exposure import histogram
@@ -7,11 +10,8 @@ from skimage.io import imsave
 from skimage.measure import find_contours
 from skimage.segmentation import join_segmentations
 
-from dermoscopic_symmetry.shape_symmetry import seg2load,pig2load
+from dermoscopic_symmetry.shape_symmetry import seg2load, pig2load
 
-import numpy as np
-import pandas as pd
-import shutil
 
 def randomPatchForDataset(image, segImage, patchSize, num, index):
     """Create a dataset of "a" randomly taken patches in a dermoscopic image and save them in the folder

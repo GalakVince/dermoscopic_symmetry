@@ -1,12 +1,12 @@
-from skimage.io import *
-from skimage.exposure import *
-from skimage.filters import *
-from skimage.measure import *
-from skimage.transform import *
-from skimage.segmentation import *
-
 import matplotlib.pyplot as plt
 import numpy as np
+from skimage.exposure import histogram
+from skimage.filters import threshold_otsu
+from skimage.io import imread
+from skimage.measure import regionprops
+from skimage.segmentation import join_segmentations
+from skimage.transform import rotate
+
 
 def pig2load(imNumber) :
     """Load a pigmented dermoscopic image from the PH2 Dataset.
@@ -17,7 +17,6 @@ def pig2load(imNumber) :
     # Outputs :
         im: The loaded image.
     """
-
     filename = "../PH2Dataset/PH2 Dataset images/" + imNumber + "/" + imNumber + "_Dermoscopic_Image/" + imNumber + ".bmp"
     im = imread(filename)
     return im
@@ -259,8 +258,7 @@ def displayShapesSymmetry(im, segIm, symmetry):
         axs[2].axis("off")
         plt.show()
 
-    else :
-
+    else:
         axs[0].axis('off')
         axs[0].imshow(im, cmap=plt.cm.gray)
         axs[0].set_title('Input image')

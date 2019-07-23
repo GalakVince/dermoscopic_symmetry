@@ -1,15 +1,14 @@
-from skimage import img_as_float64, img_as_ubyte
-from skimage.draw import circle
-from skimage.measure import regionprops, find_contours
-from skimage.transform import *
-from skimage.filters import *
-
-import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
+from skimage import img_as_float64, img_as_ubyte
+from skimage.draw import circle
+from skimage.filters import threshold_otsu
+from skimage.measure import regionprops, find_contours
+from skimage.transform import rotate
 
 from dermoscopic_symmetry.classifier_feeder import classifierTrainer
-from code.patchesForSymmetry import textureDataExtractor
+from dermoscopic_symmetry.patches_for_symmetry import textureDataExtractor
 
 
 def symmetryTexturePred(classifier):

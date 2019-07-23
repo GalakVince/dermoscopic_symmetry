@@ -1,14 +1,11 @@
-from skimage.io import *
-from skimage.exposure import *
-from skimage.feature import *
-from skimage.color import *
+import pandas as pd
 from skimage import img_as_ubyte
-
+from skimage.color import rgb2gray
+from skimage.exposure import histogram
+from skimage.feature import greycomatrix, greycoprops
+from skimage.io import imread
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
-
-import joblib
-import pandas as pd
 
 
 def aSimilarLoader(patchNumber):

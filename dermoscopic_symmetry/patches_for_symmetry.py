@@ -1,15 +1,15 @@
-from skimage.segmentation import *
-from skimage.measure import *
-from skimage.draw import *
-from skimage.exposure import *
-from skimage.feature import *
-from skimage.color import *
+import numpy as np
+import pandas as pd
 from skimage import img_as_ubyte
+from skimage.color import rgb2gray
+from skimage.draw import rectangle
+from skimage.exposure import histogram
+from skimage.feature import greycomatrix, greycoprops
+from skimage.measure import find_contours, regionprops
+from skimage.segmentation import join_segmentations
 
 from dermoscopic_symmetry.classifier_feeder import listCreator
 
-import numpy as np
-import pandas as pd
 
 def withinLesionPatchesExtractor(image, segImage, patchSize):
     """Extract patches only taken within the lesion.

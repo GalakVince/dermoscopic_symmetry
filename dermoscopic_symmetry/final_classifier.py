@@ -1,8 +1,8 @@
+import joblib
+import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 
-import joblib
-import pandas as pd
 
 def shapeBasedClassifier():
     """Train a random forest classifier with data from the "shapeScores.csv" file following the expert diagnosis about
