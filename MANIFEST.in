@@ -1,0 +1,8 @@
+include *.csv
+include *.pkl
+include patchesDataSet/*
+include patchesDataSet/nonSimilar/*
+include patchesDataSet/Similar/*
+include symtab.xlsx
+include README.md
+

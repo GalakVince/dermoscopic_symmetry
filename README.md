@@ -1,4 +1,4 @@
-# skin_sym_pkg
+# dermoscopic_symmetry
 
 skin_sym_pkg is a Python package aiming at study skin lesion's symmetry (regarding shape and textures)
 and help the diagnose of diseases like melanomas. <br/>Basically, the symmetry study is divided into
