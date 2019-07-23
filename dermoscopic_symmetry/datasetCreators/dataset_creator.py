@@ -1,15 +1,16 @@
-from skimage.io import *
-from skimage.measure import *
-from skimage.exposure import *
-from skimage.segmentation import *
-from skimage.draw import *
-from skimage import img_as_ubyte
+from random import randint, choice
 
-from dermoscopic_symmetry.shapeSymmetry import seg2load,pig2load
+from skimage import img_as_ubyte
+from skimage.draw import rectangle
+from skimage.exposure import histogram
+from skimage.io import imsave
+from skimage.measure import find_contours
+from skimage.segmentation import join_segmentations
+
+from dermoscopic_symmetry.shape_symmetry import seg2load,pig2load
 
 import numpy as np
 import pandas as pd
-from random import *
 import shutil
 
 def randomPatchForDataset(image, segImage, patchSize, num, index):

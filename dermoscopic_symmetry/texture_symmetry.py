@@ -8,7 +8,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
-from dermoscopic_symmetry.classifierFeeder import classifierTrainer
+from dermoscopic_symmetry.classifier_feeder import classifierTrainer
 from code.patchesForSymmetry import textureDataExtractor
 
 

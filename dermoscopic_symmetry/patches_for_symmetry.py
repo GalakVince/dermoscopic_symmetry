@@ -6,7 +6,7 @@ from skimage.feature import *
 from skimage.color import *
 from skimage import img_as_ubyte
 
-from dermoscopic_symmetry.classifierFeeder import listCreator
+from dermoscopic_symmetry.classifier_feeder import listCreator
 
 import numpy as np
 import pandas as pd
