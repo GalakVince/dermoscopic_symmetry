@@ -1,7 +1,7 @@
 import pandas as pd
 
-from code.shapeSymmetry import symmetryRatios, seg2load, pig2load
-from code.textureSymmetry import symmetryTextureEval
+from dermoscopic_symmetry.shape_symmetry import symmetryRatios, seg2load, pig2load
+from dermoscopic_symmetry.texture_symmetry import symmetryTextureEval
 
 
 def shapeScoresSaver(ims, asymCoefs, stepAngle):

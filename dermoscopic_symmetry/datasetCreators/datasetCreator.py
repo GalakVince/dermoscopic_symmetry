@@ -5,7 +5,7 @@ from skimage.segmentation import *
 from skimage.draw import *
 from skimage import img_as_ubyte
 
-from code.shapeSymmetry import seg2load,pig2load
+from dermoscopic_symmetry.shapeSymmetry import seg2load,pig2load
 
 import numpy as np
 import pandas as pd
