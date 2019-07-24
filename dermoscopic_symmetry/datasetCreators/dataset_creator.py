@@ -10,7 +10,7 @@ from skimage.io import imsave
 from skimage.measure import find_contours
 from skimage.segmentation import join_segmentations
 
-from dermoscopic_symmetry.shape_symmetry import seg2load, pig2load
+from dermoscopic_symmetry.utils import pig2load, seg2load
 
 
 def randomPatchForDataset(image, segImage, patchSize, num, index):

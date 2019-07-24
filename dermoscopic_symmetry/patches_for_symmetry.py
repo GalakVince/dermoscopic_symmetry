@@ -8,7 +8,7 @@ from skimage.feature import greycomatrix, greycoprops
 from skimage.measure import find_contours, regionprops
 from skimage.segmentation import join_segmentations
 
-from dermoscopic_symmetry.classifier_feeder import listCreator
+from dermoscopic_symmetry.classifier_feeder import list_creator
 
 
 def withinLesionPatchesExtractor(image, segImage, patchSize):
@@ -208,7 +208,7 @@ def textureDataExtractor(im, segIm, patchSize, nbBins):
     contrastListb = []
     homogeneityListb = []
 
-    lists = listCreator(nbBins)
+    lists = list_creator(nbBins)
 
     for index in range(0, int(len(patches)/2)) :
 

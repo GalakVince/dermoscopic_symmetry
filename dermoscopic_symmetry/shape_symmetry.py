@@ -1,46 +1,17 @@
-import matplotlib.pyplot as plt
 import numpy as np
 from skimage.exposure import histogram
 from skimage.filters import threshold_otsu
-from skimage.io import imread
 from skimage.measure import regionprops
 from skimage.segmentation import join_segmentations
 from skimage.transform import rotate
 
 
-def pig2load(imNumber) :
-    """Load a pigmented dermoscopic image from the PH2 Dataset.
-
-    # Arguments :
-        imNumber: String. The number of the image to be loaded (always with 3 digits : "IMD003").
-
-    # Outputs :
-        im: The loaded image.
-    """
-    filename = "../PH2Dataset/PH2 Dataset images/" + imNumber + "/" + imNumber + "_Dermoscopic_Image/" + imNumber + ".bmp"
-    im = imread(filename)
-    return im
-
-def seg2load(imNumber) :
-    """Load a segmented image from the PH2 Dataset.
-
-    # Arguments :
-        imNumber: String. The number of the image to be loaded (always with 3 digits : "IMD003").
-
-    # Outputs :
-        im: The loaded image.
-    """
-
-    filename = "../PH2Dataset/PH2 Dataset images/" + imNumber + "/" + imNumber + "_lesion/" + imNumber + "_lesion.bmp"
-    im = imread(filename)
-    return im
-
-def symmetryRatios(segImage, stepAngle):
+def shape_symmetry_ratios(segmentation, angle_step=9):
     """Calculate shape symmetry ratios over a range of angles from 0 to 180 degrees.
 
     # Arguments :
-        segImage:  The segmented image whose shape symmetry is tested.
-        stepAngle: Int. The step used to go from 0 to 180 degrees. Each angle permits to score symmetry in the
+        segmentation:  The segmented image whose shape symmetry is tested.
+        angle_step: Int. The step used to go from 0 to 180 degrees. Each angle permits to score symmetry in the
                        corresponding orientation.
 
     # Outputs :
@@ -50,15 +21,15 @@ def symmetryRatios(segImage, stepAngle):
         The Jaccard Index is used to perform symmetry calculus.
     """
 
-    properties = regionprops(segImage)
+    properties = regionprops(segmentation)
     centroid = properties[0].centroid
 
-    angles = [-k for k in range(0, 181, stepAngle)]
+    angles = [-k for k in range(0, 181, angle_step)]
     ratios = [0] * len(angles)
 
     for angle in angles :
 
-        rotIm = rotate(segImage, angle, resize=True, center=centroid)
+        rotIm = rotate(segmentation, angle, resize=True, center=centroid)
         thresh = threshold_otsu(rotIm)
         rotIm = 1*(rotIm > thresh)
 
@@ -96,183 +67,87 @@ def symmetryRatios(segImage, stepAngle):
         truePix = histoJoin[0][-1]
 
         ratio = truePix/wPix
-        ratios[int(angle/stepAngle)] = 100*ratio
+        ratios[int(angle/angle_step)] = 100*ratio
 
     return ratios
 
-def symmetryShapeEval(segImage, stepAngle):
+
+def symmetry_shape(segmentation, angle_step=9):
     """Evaluate the shape symmetry of an image over a range of angles from 0 to 180 degrees. There are 3 possibilities :
        symmetric (at least 2 axis), not fully symmetric (1-axis symmetry), or asymmetric.
 
     # Arguments :
-        segImage:  The image whose shape symmetry is evaluated.
-        stepAngle: Int. The step used to go from 0 to 180 degrees. Each angle permits to score symmetry in the
+        segmentation:  The image whose shape symmetry is evaluated.
+        angle_step: Int. The step used to go from 0 to 180 degrees. Each angle permits to score symmetry in the
                        corresponding orientation
 
     # Outputs :
-        res: list containing symmetry result (res[0]), percentage of symmetry of the main axe and angle from the
-        horizontal (res[1]) if it exists, percentage of symmetry of the second main axe and angle from the
-        horizontal (res[2]) if it exists.
+        symmetry_info: list containing symmetry result (symmetry_info[0]), percentage of symmetry of the main axe and angle from the
+            horizontal (symmetry_info[1]) if it exists, percentage of symmetry of the second main axe and angle from the
+            horizontal (symmetry_info[2]) if it exists.
                 Symmetry result can be :
-                        0 -> image shape symmetric
-                        1 -> image shape not fully symmetric
-                        2 -> image shape asymmetric
+                         0 -> image shape symmetric
+                         1 -> image shape not fully symmetric
+                         2 -> image shape asymmetric
                         -1 -> unable to perform symmetry evaluation, image shape considered asymmetric
     """
 
-    ratios = symmetryRatios(segImage, stepAngle)
+    ratios = shape_symmetry_ratios(segmentation, angle_step)
 
-    right = segImage[:, 0]
-    left = segImage[:, np.shape(segImage)[1] - 1]
-    up = segImage[0, :]
-    bottom = segImage[np.shape(segImage)[0] - 1, :]
+    right = segmentation[:, 0]
+    left = segmentation[:, np.shape(segmentation)[1] - 1]
+    up = segmentation[0, :]
+    bottom = segmentation[np.shape(segmentation)[0] - 1, :]
 
     mainCoef = max(ratios)
     highThresh = 92
     lowThresh = 90
 
-    if (list(up).count(255) > np.shape(segImage)[1]/3 or list(bottom).count(255) > np.shape(segImage)[1]/3 or list(left).count(255) > np.shape(segImage)[0]/3 or list(right).count(255) > np.shape(segImage)[0]/3) :
+    if (list(up).count(255) > np.shape(segmentation)[1]/3 or list(bottom).count(255) > np.shape(segmentation)[1]/3 or list(left).count(255) > np.shape(segmentation)[0]/3 or list(right).count(255) > np.shape(segmentation)[0]/3) :
 
-        res = [-1, [None,None], [None,None]]
+        symmetry_info = [-1, [None,None], [None,None]]
 
     elif (mainCoef > highThresh) :
 
         indMax = ratios.index(max(ratios))
-        angleMax = stepAngle*indMax
+        angleMax = angle_step*indMax
         angleOrtho = angleMax + 90
 
         if angleOrtho<=180 and angleOrtho>= 0 :
 
-            if ratios[int(angleOrtho/stepAngle)] < 88 :
+            if ratios[int(angleOrtho/angle_step)] < 88 :
 
-                res = [1, [angleMax,mainCoef], [None,None]]
+                symmetry_info = [1, [angleMax,mainCoef], [None,None]]
 
             else :
 
-                res = [0, [angleMax,mainCoef], [angleOrtho,ratios[indMax+int(90/stepAngle)]]]
+                symmetry_info = [0, [angleMax,mainCoef], [angleOrtho,ratios[indMax+int(90/angle_step)]]]
 
         else :
             angleOrtho -= 180
-            if ratios[int(angleOrtho / stepAngle)] < 88:
+            if ratios[int(angleOrtho / angle_step)] < 88:
 
-                res = [1, [angleMax,mainCoef], [None,None]]
+                symmetry_info = [1, [angleMax,mainCoef], [None,None]]
 
             else:
-                if indMax+int(90/stepAngle)<len(ratios):
-                    res = [0, [angleMax,mainCoef], [angleOrtho,ratios[indMax+int(90/stepAngle)]]]
+                if indMax+int(90/angle_step)<len(ratios):
+                    symmetry_info = [0, [angleMax,mainCoef], [angleOrtho,ratios[indMax+int(90/angle_step)]]]
 
                 else :
-                    res = [0, [angleMax, mainCoef], [angleOrtho, ratios[indMax - int(90 / stepAngle)]]]
+                    symmetry_info = [0, [angleMax, mainCoef], [angleOrtho, ratios[indMax - int(90 / angle_step)]]]
 
     elif (mainCoef < lowThresh) :
 
-        res = [2, [None,None], [None,None]]
+        symmetry_info = [2, [None,None], [None,None]]
 
     else:
 
         indMax = ratios.index(max(ratios))
-        angleMax = stepAngle * indMax
+        angleMax = angle_step * indMax
 
-        res = [1, [angleMax, mainCoef], [None, None]]
+        symmetry_info = [1, [angleMax, mainCoef], [None, None]]
 
-    return res
-
-def displayShapesSymmetry(im, segIm, symmetry):
-    """Display the axis of symmetry of an image, considering shape symmetry.
-
-    # Arguments :
-        im:       The image whose shape symmetry has been evaluated with the symmetryShapeEval() function.
-        segIm:    The corresponding segmented image.
-        symmetry: The output of the symmetryShapeEval() function used on `im`.
-
-    # Outputs :
-        Only display axis. Return 0 if no error occured.
-    """
-
-    fig, axs = plt.subplots(1, 3, sharex=True, sharey=True)
-    fig.suptitle("Shape Symmetry", fontsize=20)
-
-    properties = regionprops(segIm)
-    centroid = properties[0].centroid
-
-
-
-    if symmetry[0] == 0:
-        pente = np.tan(symmetry[1][0] * np.pi / 180)
-        ordOrig = centroid[0] - pente * centroid[1]
-        x = np.linspace(0, np.shape(segIm)[1])
-        y = pente * x + ordOrig
-
-        penteOrtho = np.tan(symmetry[2][0] * np.pi / 180)
-        ordOrigOrtho = centroid[0] - penteOrtho * centroid[1]
-        xOrtho = np.linspace(0, np.shape(segIm)[1])
-        yOrtho = penteOrtho * x + ordOrigOrtho
-
-        axs[0].axis('off')
-        axs[0].imshow(im, cmap=plt.cm.gray)
-        axs[0].set_title('Input image')
-
-        axs[1].axis('off')
-        axs[1].imshow(segIm, cmap=plt.cm.gray)
-        axs[1].set_title('Segmented image')
-
-        axs[2].plot(x, y, "-r", linewidth=2)
-        axs[2].plot(xOrtho, yOrtho, "-r", linewidth=0.8)
-        axs[2].imshow(segIm, cmap=plt.cm.gray)
-        axs[2].set_title("Main symmetry axis")
-        axs[2].axis("off")
-        plt.show()
-
-    elif symmetry[0] == 1:
-        pente = np.tan(symmetry[1][0] * np.pi / 180)
-        ordOrig = centroid[0] - pente * centroid[1]
-        x = np.linspace(0, np.shape(segIm)[1])
-        y = pente * x + ordOrig
-
-        axs[0].axis('off')
-        axs[0].imshow(im, cmap=plt.cm.gray)
-        axs[0].set_title('Input image')
-
-        axs[1].axis('off')
-        axs[1].imshow(segIm, cmap=plt.cm.gray)
-        axs[1].set_title('Segmented image')
-
-        axs[2].plot(x, y, "-r")
-        axs[2].imshow(segIm, cmap=plt.cm.gray)
-        axs[2].set_title("Main symmetry axis")
-        axs[2].axis("off")
-        plt.show()
-
-    elif symmetry[0] == 2:
-
-        axs[0].axis('off')
-        axs[0].imshow(im, cmap=plt.cm.gray)
-        axs[0].set_title('Input image')
-
-        axs[1].axis('off')
-        axs[1].imshow(segIm, cmap=plt.cm.gray)
-        axs[1].set_title('Segmented image')
-
-        axs[2].imshow(segIm, cmap=plt.cm.gray)
-        axs[2].set_title("No symmetry axis")
-        axs[2].axis("off")
-        plt.show()
-
-    else:
-        axs[0].axis('off')
-        axs[0].imshow(im, cmap=plt.cm.gray)
-        axs[0].set_title('Input image')
-
-        axs[1].axis('off')
-        axs[1].imshow(segIm, cmap=plt.cm.gray)
-        axs[1].set_title('Segmented image')
-
-        axs[2].imshow(segIm, cmap=plt.cm.gray)
-        axs[2].set_title("Too large lesion : no symmetry axis")
-        axs[2].axis("off")
-        plt.show()
-
-    return 0
+    return symmetry_info
 
 #----------EXAMPLE-------------------------
 # segIm = seg2load("IMD400")

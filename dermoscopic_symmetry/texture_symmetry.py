@@ -11,6 +11,20 @@ from dermoscopic_symmetry.classifier_feeder import classifierTrainer
 from dermoscopic_symmetry.patches_for_symmetry import textureDataExtractor
 
 
+#-------------EXAMPLE------------------------------
+# im = pig2load("IMD009")
+# segIm = seg2load("IMD009")
+# res, ratios = symmetryTextureEval(im, segIm, 5)
+# print(ratios)
+# displayTextureSymmetry(im, segIm, res)
+
+# clf, acc = classifierTrainer(100)
+# preds, nonSimilar, similar = symmetryTexturePred(clf)
+# patches, points, reference = textureDataExtractor(im, segIm, 32, 4)
+# displaySimilarityMatches(im, segIm, preds, points, reference)
+#--------------------------------------------------
+
+
 def symmetryTexturePred(classifier):
     """Predict if symetric pairs of patches taken in a dermoscopic image are similar or not using features extracted
        with the `textureDataExtractor()` function and stored in the "feature.csv" file.
@@ -119,7 +133,7 @@ def displaySimilarityMatches(im, segIm, preds, points, reference):
         reference: The part of the image taken as a reference ("Upper" or "Lower") (`textureDataExtractor()` function).
 
     # Outputs :
-        Display the map of similarity. Returns 0 if no error occured.
+        Display the map of similarity.
     """
 
     # Crop images to be centered on the lesion
@@ -251,101 +265,3 @@ def displaySimilarityMatches(im, segIm, preds, points, reference):
     axs[1].set_title('Similar matches (green) and non similar matches (red)')
 
     plt.show()
-
-    return 0
-
-def displayTextureSymmetry(im, segIm, symmetry):
-    """Display the axis of symmetry of an image, considering textures symmetry.
-
-    # Arguments :
-        im:       The image whose textures symmetry has been evaluated.
-        segIm:    The corresponding segmented image.
-        symmetry: The output of the `symmetryTextureEval()` function.
-
-    # Outputs :
-        Display axis. Returns 0 if no error occured.
-    """
-
-    fig, axs = plt.subplots(1, 2, sharex=True, sharey=True)
-    fig.suptitle("Texture Symmetry", fontsize=20)
-
-    blkSeg = np.zeros((np.shape(segIm)[0] + 2, np.shape(segIm)[1] + 2))
-    blkSeg[1:np.shape(blkSeg)[0] - 1, 1:np.shape(blkSeg)[1] - 1] = segIm
-    segIm = blkSeg
-    contour = find_contours(segIm, 0)
-    cnt = contour[0]
-    minx = min(cnt[:, 1])
-    maxx = max(cnt[:, 1])
-    miny = min(cnt[:, 0])
-    maxy = max(cnt[:, 0])
-    segIm = segIm[max(0, int(miny) - 1):int(maxy) + 1, max(0, int(minx) - 1):int(maxx) + 1]
-    im = im[max(0, int(miny) - 1):int(maxy), max(0, int(minx) - 1):int(maxx) + 1]
-
-    # Compute center of mass
-    segIm = img_as_ubyte(segIm / 255)
-    properties = regionprops(segIm)
-    centroid = properties[0].centroid
-
-    if symmetry[0] == 0:
-        pente = np.tan(symmetry[1][0] * np.pi / 180)
-        ordOrig = centroid[0] - pente * centroid[1]
-        x = np.linspace(0, np.shape(segIm)[1])
-        y = pente * x + ordOrig
-
-        penteOrtho = np.tan(symmetry[2][0] * np.pi / 180)
-        ordOrigOrtho = centroid[0] - penteOrtho * centroid[1]
-        xOrtho = np.linspace(0, np.shape(segIm)[1])
-        yOrtho = penteOrtho * x + ordOrigOrtho
-
-        axs[0].axis('off')
-        axs[0].imshow(im, cmap=plt.cm.gray)
-        axs[0].set_title('Input image')
-
-        axs[1].plot(x, y, "-r", linewidth=2)
-        axs[1].plot(xOrtho, yOrtho, "-r", linewidth=0.8)
-        axs[1].imshow(im, cmap=plt.cm.gray)
-        axs[1].set_title("Main symmetry axis")
-        axs[1].axis("off")
-        plt.show()
-
-    elif symmetry[0] == 1:
-        pente = np.tan(symmetry[1][0] * np.pi / 180)
-        ordOrig = centroid[0] - pente * centroid[1]
-        x = np.linspace(0, np.shape(segIm)[1])
-        y = pente * x + ordOrig
-
-        axs[0].axis('off')
-        axs[0].imshow(im, cmap=plt.cm.gray)
-        axs[0].set_title('Input image')
-
-        axs[1].plot(x, y, "-r")
-        axs[1].imshow(im, cmap=plt.cm.gray)
-        axs[1].set_title("Main symmetry axis")
-        axs[1].axis("off")
-        plt.show()
-
-    else:
-
-        axs[0].axis('off')
-        axs[0].imshow(im, cmap=plt.cm.gray)
-        axs[0].set_title('Input image')
-
-        axs[1].imshow(im, cmap=plt.cm.gray)
-        axs[1].set_title("No symmetry axis")
-        axs[1].axis("off")
-        plt.show()
-
-    return 0
-
-#-------------EXAMPLE------------------------------
-# im = pig2load("IMD009")
-# segIm = seg2load("IMD009")
-# res, ratios = symmetryTextureEval(im, segIm, 5)
-# print(ratios)
-# displayTextureSymmetry(im, segIm, res)
-
-# clf, acc = classifierTrainer(100)
-# preds, nonSimilar, similar = symmetryTexturePred(clf)
-# patches, points, reference = textureDataExtractor(im, segIm, 32, 4)
-# displaySimilarityMatches(im, segIm, preds, points, reference)
-#--------------------------------------------------

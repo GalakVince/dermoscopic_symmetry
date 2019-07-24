@@ -1,6 +1,7 @@
 import pandas as pd
 
-from dermoscopic_symmetry.shape_symmetry import symmetryRatios, seg2load, pig2load
+from dermoscopic_symmetry.shape_symmetry import shape_symmetry_ratios
+from dermoscopic_symmetry.utils import pig2load, seg2load
 from dermoscopic_symmetry.texture_symmetry import symmetryTextureEval
 
 
@@ -32,7 +33,7 @@ def shapeScoresSaver(ims, asymCoefs, stepAngle):
     c = 0
     for im in ims:
         print(c+1,"/200")
-        ratios = symmetryRatios(im,stepAngle)
+        ratios = shape_symmetry_ratios(im, stepAngle)
         for k in range(len(ratios)):
             lists[k].append(ratios[k])
         c+=1
