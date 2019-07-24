@@ -182,8 +182,8 @@ def displayTextureSymmetry(im, segIm, symmetry):
     return 0
 
 
-def pig2load(imNumber) :
-    """Load a pigmented dermoscopic image from the PH2 Dataset.
+def load_dermoscopic(imNumber) :
+    """Load a dermoscopic image from the PH2 Dataset.
 
     # Arguments :
         imNumber: String. The number of the image to be loaded (always with 3 digits : "IMD003").
@@ -191,12 +191,15 @@ def pig2load(imNumber) :
     # Outputs :
         im: The loaded image.
     """
-    filename = "../PH2Dataset/PH2 Dataset images/" + imNumber + "/" + imNumber + "_Dermoscopic_Image/" + imNumber + ".bmp"
-    im = imread(filename)
+    filename = "/data/PH2Dataset/PH2 Dataset images/" + imNumber + "/" + imNumber + "_Dermoscopic_Image/" + imNumber + ".bmp"
+    try:
+        im = imread(filename)
+    except FileNotFoundError as exc:
+        raise RuntimeError('Plase copy the PH2 dataset in /data/PH2Dataset/') from exc
     return im
 
 
-def seg2load(imNumber) :
+def load_segmentation(imNumber) :
     """Load a segmented image from the PH2 Dataset.
 
     # Arguments :
@@ -207,5 +210,8 @@ def seg2load(imNumber) :
     """
 
     filename = "../PH2Dataset/PH2 Dataset images/" + imNumber + "/" + imNumber + "_lesion/" + imNumber + "_lesion.bmp"
-    im = imread(filename)
+    try:
+        im = imread(filename)
+    except FileNotFoundError as exc:
+        raise RuntimeError('Plase copy the PH2 dataset in /data/PH2Dataset/') from exc
     return im

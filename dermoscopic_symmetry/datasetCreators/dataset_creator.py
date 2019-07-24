@@ -10,7 +10,7 @@ from skimage.io import imsave
 from skimage.measure import find_contours
 from skimage.segmentation import join_segmentations
 
-from dermoscopic_symmetry.utils import pig2load, seg2load
+from dermoscopic_symmetry.utils import load_dermoscopic, load_segmentation
 
 
 def randomPatchForDataset(image, segImage, patchSize, num, index):
@@ -106,7 +106,7 @@ def datasetCreator(patchesPerImage, patchSize, overlap):
     allInorOut = []
 
     for img in images:
-        segIm = seg2load(img)
+        segIm = load_segmentation(img)
 
         contour = find_contours(segIm, 0)
         cnt = contour[0]
@@ -116,7 +116,7 @@ def datasetCreator(patchesPerImage, patchSize, overlap):
         miny = max(cnt[:, 0])
         segIm = segIm[int(maxy):int(miny), int(minx):int(maxx)]
 
-        im = pig2load(img)
+        im = load_dermoscopic(img)
 
         imCrop = im[int(maxy):int(miny), int(minx):int(maxx)]
 
@@ -129,7 +129,7 @@ def datasetCreator(patchesPerImage, patchSize, overlap):
     #---------------Creation of the "b" patches (to have pairs of patches "a" and "b")-----------------
     for countIndex in range(len(images)):
 
-        segIm = seg2load(images[countIndex])
+        segIm = load_segmentation(images[countIndex])
 
         contour = find_contours(segIm, 0)
         cnt = contour[0]
@@ -139,7 +139,7 @@ def datasetCreator(patchesPerImage, patchSize, overlap):
         miny = max(cnt[:, 0])
         segIm = segIm[int(maxy):int(miny), int(minx):int(maxx)]
 
-        im = pig2load(images[countIndex])
+        im = load_dermoscopic(images[countIndex])
 
         imCrop = im[int(maxy):int(miny), int(minx):int(maxx)]
 

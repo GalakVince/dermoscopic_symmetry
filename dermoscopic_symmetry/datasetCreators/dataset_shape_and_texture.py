@@ -1,7 +1,7 @@
 import pandas as pd
 
 from dermoscopic_symmetry.shape_symmetry import shape_symmetry_ratios
-from dermoscopic_symmetry.utils import pig2load, seg2load
+from dermoscopic_symmetry.utils import load_dermoscopic, load_segmentation
 from dermoscopic_symmetry.texture_symmetry import symmetryTextureEval
 
 
@@ -73,8 +73,8 @@ def textureScoresSaver(ims, asymCoefs, stepAngle):
     c = 0
     for im in ims:
         print(im, " : ",c + 1, "/200")
-        segIm = seg2load(im)
-        im = pig2load(im)
+        segIm = load_segmentation(im)
+        im = load_dermoscopic(im)
         res, ratios = symmetryTextureEval(im, segIm, stepAngle)
         for k in range(len(ratios)):
             lists[k].append(ratios[k])

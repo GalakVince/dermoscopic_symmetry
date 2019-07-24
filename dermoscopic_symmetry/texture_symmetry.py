@@ -11,19 +11,6 @@ from dermoscopic_symmetry.classifier_feeder import classifierTrainer
 from dermoscopic_symmetry.patches_for_symmetry import textureDataExtractor
 
 
-#-------------EXAMPLE------------------------------
-# im = pig2load("IMD009")
-# segIm = seg2load("IMD009")
-# res, ratios = symmetryTextureEval(im, segIm, 5)
-# print(ratios)
-# displayTextureSymmetry(im, segIm, res)
-
-# clf, acc = classifierTrainer(100)
-# preds, nonSimilar, similar = symmetryTexturePred(clf)
-# patches, points, reference = textureDataExtractor(im, segIm, 32, 4)
-# displaySimilarityMatches(im, segIm, preds, points, reference)
-#--------------------------------------------------
-
 
 def symmetryTexturePred(classifier):
     """Predict if symetric pairs of patches taken in a dermoscopic image are similar or not using features extracted
@@ -265,3 +252,20 @@ def displaySimilarityMatches(im, segIm, preds, points, reference):
     axs[1].set_title('Similar matches (green) and non similar matches (red)')
 
     plt.show()
+
+
+# -------------EXAMPLE------------------------------
+if __name__ == '__main__':
+    from dermoscopic_symmetry.utils import load_dermoscopic, load_segmentation, displayTextureSymmetry
+
+    im = load_dermoscopic("IMD009")
+    segIm = load_segmentation("IMD009")
+    res, ratios = symmetryTextureEval(im, segIm, 5)
+    print(ratios)
+    displayTextureSymmetry(im, segIm, res)
+
+    clf, acc = classifierTrainer(100)
+    preds, nonSimilar, similar = symmetryTexturePred(clf)
+    patches, points, reference = textureDataExtractor(im, segIm, 32, 4)
+    displaySimilarityMatches(im, segIm, preds, points, reference)
+# --------------------------------------------------
