@@ -1,3 +1,4 @@
+import joblib
 import pandas as pd
 from skimage import img_as_ubyte
 from skimage.color import rgb2gray
@@ -6,6 +7,14 @@ from skimage.feature import greycomatrix, greycoprops
 from skimage.io import imread
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
+
+
+def example():
+    """Usage example of the main functionalities within this file. """
+    dataExtractorForTraining(10, 199, 4)
+    classifier, accScore = classifierTrainer(200)
+    print(f'Accuracy score: {accScore}')
+    joblib.dump(classifier, "./data/similarityModel.pkl")
 
 
 def load_patches(patchNumber, subdir):
@@ -37,9 +46,10 @@ def list_creator(nbBins):
         lists: A list of 2*3*`nbBins` empty lists.
     """
     nbLists = 2*3*nbBins
-    return nbLists * [[]]
+    return [[] for _ in range(nbLists)]
 
-def dataExtractorForTraining(patchesPerImage, nbImages, nbBins):
+
+def dataExtractorForTraining(patchesPerImage, nbImages, nbBins=4):
     """Create a file "features.csv" containing glcm features and colors feature extracted from all patches of the
        "patchesDataSet" folder. This file is saved in the "patchesDataSet folder.
 
@@ -305,9 +315,8 @@ def dataExtractorForTraining(patchesPerImage, nbImages, nbBins):
 
     df["Result"] = resultList
 
-    df.to_csv("../patchesDataSet/features.csv")
+    df.to_csv("./data/patchesDataSet/features.csv")
 
-    return 0
 
 def classifierTrainer(maxLeafNodes):
     """Train a random forest classifier with data from the patchesDataSet.
@@ -322,11 +331,11 @@ def classifierTrainer(maxLeafNodes):
         acc: The accuracy score of the classifier
     """
 
-    data = pd.read_csv("../patchesDataSet/features.csv")
+    data = pd.read_csv("./data/patchesDataSet/features.csv")
 
     features = list(data)
-    del features[0]
-    del features[-1]
+    del features[0]      # Remove feature index
+    del features[-1]     # Remove `Result` colname.
 
     trainX = data[features][500:]
     trainy = data.Result[500:]
@@ -342,9 +351,7 @@ def classifierTrainer(maxLeafNodes):
 
     return (clf, acc)
 
-#-----------------EXAMPLE-----------------------
-# dataExtractorForTraining(10,199,4)
-# classifier, accScore = classifierTrainer(200)
-# print(accScore)
-# joblib.dump(classifier, "similarityModel.pkl")
-#-----------------------------------------------
+
+# Run example() whenever running this script as main
+if __name__ == '__main__':
+    example()

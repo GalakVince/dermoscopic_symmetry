@@ -4,6 +4,14 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 
 
+def example():
+    """Usage example of the main functionalities within this file. """
+    accShape, accTexture, accFinal = modelsSaver()
+    print(accShape)
+    print(accTexture)
+    print(accFinal)
+
+
 def shapeBasedClassifier():
     """Train a random forest classifier with data from the "shapeScores.csv" file following the expert diagnosis about
        symmetry (PH2 Dataset).
@@ -13,7 +21,7 @@ def shapeBasedClassifier():
         acc: The accuracy score of the classifier
     """
 
-    data = pd.read_csv("../ShapeScores.csv")
+    data = pd.read_csv("./data/ShapeScores.csv")
 
     features = list(data)
     del features[0]
@@ -41,7 +49,7 @@ def textureBasedClassifier():
         acc: The accuracy score of the classifier
     """
 
-    data = pd.read_csv("../TextureScores.csv")
+    data = pd.read_csv("./data/TextureScores.csv")
 
     features = list(data)
     del features[0]
@@ -69,7 +77,7 @@ def finalClassifier():
         acc: The accuracy score of the classifier
     """
 
-    data = pd.read_csv("../ShapeAndTextureScores.csv")
+    data = pd.read_csv("./data/ShapeAndTextureScores.csv")
 
     features = list(data)
     del features[0]
@@ -101,15 +109,13 @@ def modelsSaver():
     clfTexture, accTexture = textureBasedClassifier()
     clfFinal, accFinal = finalClassifier()
 
-    joblib.dump(clfShape,"../shapeModel.pkl")
-    joblib.dump(clfTexture,"../textureModel.pkl")
-    joblib.dump(clfFinal,"../shapeAndTextureModel.pkl")
+    joblib.dump(clfShape,"./data/shapeModel.pkl")
+    joblib.dump(clfTexture,"./data/textureModel.pkl")
+    joblib.dump(clfFinal,"./data/shapeAndTextureModel.pkl")
 
     return (accShape,accTexture,accFinal)
 
-#----------------EXAMPLE----------------------
-# accShape, accTexture, accFinal = modelsSaver()
-# print(accShape)
-# print(accTexture)
-# print(accFinal)
-#---------------------------------------------
+
+# Run example() whenever running this script as main
+if __name__ == '__main__':
+    example()

@@ -191,7 +191,7 @@ def load_dermoscopic(imNumber) :
     # Outputs :
         im: The loaded image.
     """
-    filename = "/data/PH2Dataset/PH2 Dataset images/" + imNumber + "/" + imNumber + "_Dermoscopic_Image/" + imNumber + ".bmp"
+    filename = "./data/PH2Dataset/PH2 Dataset images/" + imNumber + "/" + imNumber + "_Dermoscopic_Image/" + imNumber + ".bmp"
     try:
         im = imread(filename)
     except FileNotFoundError as exc:
@@ -199,7 +199,7 @@ def load_dermoscopic(imNumber) :
     return im
 
 
-def load_segmentation(imNumber) :
+def load_segmentation(imNumber):
     """Load a segmented image from the PH2 Dataset.
 
     # Arguments :
@@ -209,7 +209,7 @@ def load_segmentation(imNumber) :
         im: The loaded image.
     """
 
-    filename = "../PH2Dataset/PH2 Dataset images/" + imNumber + "/" + imNumber + "_lesion/" + imNumber + "_lesion.bmp"
+    filename = "./data/PH2Dataset/PH2 Dataset images/" + imNumber + "/" + imNumber + "_lesion/" + imNumber + "_lesion.bmp"
     try:
         im = imread(filename)
     except FileNotFoundError as exc:

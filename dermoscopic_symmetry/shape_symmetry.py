@@ -6,6 +6,16 @@ from skimage.segmentation import join_segmentations
 from skimage.transform import rotate
 
 
+def example():
+    """Usage example of the main functionalities within this file. """
+    from dermoscopic_symmetry.utils import load_dermoscopic, load_segmentation, display_symmetry_axes
+    dermoscopic = load_dermoscopic("IMD400")
+    segmentation = load_segmentation("IMD400")
+    symmetry_info = shape_symmetry(segmentation, angle_step=9)
+    print(f'Symmetry info: {symmetry_info}')
+    display_symmetry_axes(dermoscopic, segmentation, symmetry_info)
+
+
 def shape_symmetry_ratios(segmentation, angle_step=9):
     """Calculate shape symmetry ratios over a range of angles from 0 to 180 degrees.
 
@@ -72,7 +82,7 @@ def shape_symmetry_ratios(segmentation, angle_step=9):
     return ratios
 
 
-def symmetry_shape(segmentation, angle_step=9):
+def shape_symmetry(segmentation, angle_step=9):
     """Evaluate the shape symmetry of an image over a range of angles from 0 to 180 degrees. There are 3 possibilities :
        symmetric (at least 2 axis), not fully symmetric (1-axis symmetry), or asymmetric.
 
@@ -149,10 +159,7 @@ def symmetry_shape(segmentation, angle_step=9):
 
     return symmetry_info
 
-#----------EXAMPLE-------------------------
-# segIm = seg2load("IMD400")
-# im = pig2load("IMD400")
-# sym, out = symmetryShapeEval(segIm, 9)
-# print(sym)
-# displayShapesSymmetry(im, segIm,sym)
-#------------------------------------------
+
+# Run example() whenever running this script as main
+if __name__ == '__main__':
+    example()

@@ -267,5 +267,3 @@ def datasetCreator(patchesPerImage, patchSize, overlap):
                         "../../patchesDataSet/nonSimilar/patch" + str(compteur) + "a.bmp")
             shutil.move("../../patchesDataSet/patch" + str(compteur) + "b.bmp",
                         "../../patchesDataSet/nonSimilar/patch" + str(compteur) + "b.bmp")
-
-    return 0

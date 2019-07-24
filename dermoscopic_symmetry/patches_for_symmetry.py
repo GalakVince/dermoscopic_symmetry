@@ -9,6 +9,13 @@ from skimage.measure import find_contours, regionprops
 from skimage.segmentation import join_segmentations
 
 from dermoscopic_symmetry.classifier_feeder import list_creator
+from dermoscopic_symmetry.utils import load_segmentation, load_dermoscopic
+
+
+def example():
+    im = load_dermoscopic("IMD400")
+    segIm = load_segmentation("IMD400")
+    patchesUsed, points, reference = textureDataExtractor(im, segIm, 32, 4)
 
 
 def withinLesionPatchesExtractor(image, segImage, patchSize):
@@ -338,12 +345,11 @@ def textureDataExtractor(im, segIm, patchSize, nbBins):
             df["blue " + str(k + 1 - 5*nbBins) + "/" + str(nbBins) + " b"] = lists[k]
 
     # Create .csv file
-    df.to_csv("../patchesDataSet/features.csv")
+    df.to_csv("./data/patchesDataSet/features.csv")
 
     return (patchesUsed, points, reference)
 
-#----------------EXAMPLE----------------------------------------------
-# im = pig2load("IMD400")
-# segIm = seg2load("IMD400")
-# patchesUsed, points, reference = textureDataExtractor(im, segIm, 32, 4)
-#---------------------------------------------------------------------
+
+# Run example() whenever running this script as main
+if __name__ == '__main__':
+    example()

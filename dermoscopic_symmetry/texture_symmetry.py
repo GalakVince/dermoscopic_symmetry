@@ -7,9 +7,29 @@ from skimage.filters import threshold_otsu
 from skimage.measure import regionprops, find_contours
 from skimage.transform import rotate
 
-from dermoscopic_symmetry.classifier_feeder import classifierTrainer
+from dermoscopic_symmetry.classifier_feeder import classifierTrainer, dataExtractorForTraining
 from dermoscopic_symmetry.patches_for_symmetry import textureDataExtractor
+from dermoscopic_symmetry.utils import load_dermoscopic, load_segmentation, displayTextureSymmetry
 
+
+def example(create_features = True):
+    """Usage example of the main functionalities within this file. """
+    im = load_dermoscopic("IMD009")
+    segIm = load_segmentation("IMD009")
+
+    if create_features:
+        dataExtractorForTraining(patchesPerImage=10, nbImages=199, nbBins=4)
+        clf, acc = classifierTrainer(100)
+    else:
+        raise NotImplementedError
+
+    res, ratios = symmetryTextureEval(im, segIm, 5)
+    print(ratios)
+    displayTextureSymmetry(im, segIm, res)
+
+    preds, nonSimilar, similar = symmetryTexturePred(clf)
+    patches, points, reference = textureDataExtractor(im, segIm, 32, 4)
+    displaySimilarityMatches(im, segIm, preds, points, reference)
 
 
 def symmetryTexturePred(classifier):
@@ -25,7 +45,7 @@ def symmetryTexturePred(classifier):
         similarNum:    Int. The number of similar matches.
     """
 
-    data = pd.read_csv("../patchesDataSet/features.csv")
+    data = pd.read_csv("./data/patchesDataSet/features.csv")
     features = list(data)
     del features[0]
 
@@ -254,18 +274,6 @@ def displaySimilarityMatches(im, segIm, preds, points, reference):
     plt.show()
 
 
-# -------------EXAMPLE------------------------------
+# Run example() whenever running this script as main
 if __name__ == '__main__':
-    from dermoscopic_symmetry.utils import load_dermoscopic, load_segmentation, displayTextureSymmetry
-
-    im = load_dermoscopic("IMD009")
-    segIm = load_segmentation("IMD009")
-    res, ratios = symmetryTextureEval(im, segIm, 5)
-    print(ratios)
-    displayTextureSymmetry(im, segIm, res)
-
-    clf, acc = classifierTrainer(100)
-    preds, nonSimilar, similar = symmetryTexturePred(clf)
-    patches, points, reference = textureDataExtractor(im, segIm, 32, 4)
-    displaySimilarityMatches(im, segIm, preds, points, reference)
-# --------------------------------------------------
+    example()
