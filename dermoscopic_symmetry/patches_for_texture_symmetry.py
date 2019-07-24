@@ -180,6 +180,7 @@ def patchesForClassifier(im, segIm, patchSize):
 
     return (n,pointsUsed,indexes,reference, patches)
 
+
 def textureDataExtractor(im, segIm, patchSize, nbBins):
     """Extract gray level co-occurence matrix's features (dissimilarity, correlation, energy, contrast and homogeneity)
        and color feature (color histogram for each RGB's channel) from patches taken in a dermoscopic image and stored

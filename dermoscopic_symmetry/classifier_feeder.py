@@ -8,7 +8,7 @@ from skimage.io import imread
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 
-from dermoscopic_symmetry.utils import package_path
+from dermoscopic_symmetry.utils import package_path, save_model
 
 
 def example():
@@ -16,7 +16,7 @@ def example():
     dataExtractorForTraining(10, 199, 4)
     classifier, accScore = classifierTrainer(200)
     print(f'Accuracy score: {accScore}')
-    joblib.dump(classifier, f"{package_path()}//data/similarityModel.pkl")
+    save_model(classifier, "SimilarPatchClassifier")
 
 
 def load_patches(patchNumber, subdir):

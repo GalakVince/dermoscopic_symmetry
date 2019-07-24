@@ -244,5 +244,6 @@ def load_PH2_asymmetry_GT():
     df = pd.read_excel(f"{package_path()}/data/symtab.xlsx")
     return df["Image Name"], df["Asymmetry"]
 
+
 def package_path():
     return os.path.dirname(os.path.abspath(__file__))

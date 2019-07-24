@@ -9,7 +9,7 @@ from skimage.transform import rotate
 
 from dermoscopic_symmetry.classifier_feeder import classifierTrainer, dataExtractorForTraining
 from dermoscopic_symmetry.patches_for_texture_symmetry import textureDataExtractor
-from dermoscopic_symmetry.utils import load_dermoscopic, load_segmentation, displayTextureSymmetry
+from dermoscopic_symmetry.utils import load_dermoscopic, load_segmentation, displayTextureSymmetry, package_path
 
 
 def example(create_features=True):
@@ -45,8 +45,7 @@ def symmetryTexturePred(classifier):
         nonSimilarNum: Int. The number of non similar matches.
         similarNum:    Int. The number of similar matches.
     """
-
-    data = pd.read_csv(f"{package_path()}/patchesDataSet/features.csv")
+    data = pd.read_csv(f"{package_path()}/data/patchesDataSet/features.csv")
     features = list(data)
     del features[0]
 
