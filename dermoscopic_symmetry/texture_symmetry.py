@@ -12,7 +12,7 @@ from dermoscopic_symmetry.patches_for_symmetry import textureDataExtractor
 from dermoscopic_symmetry.utils import load_dermoscopic, load_segmentation, displayTextureSymmetry
 
 
-def example(create_features = True):
+def example(create_features=True):
     """Usage example of the main functionalities within this file. """
     im = load_dermoscopic("IMD009")
     segIm = load_segmentation("IMD009")
@@ -20,6 +20,7 @@ def example(create_features = True):
     if create_features:
         dataExtractorForTraining(patchesPerImage=10, nbImages=199, nbBins=4)
         clf, acc = classifierTrainer(100)
+
     else:
         raise NotImplementedError
 

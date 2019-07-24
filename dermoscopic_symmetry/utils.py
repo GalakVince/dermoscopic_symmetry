@@ -1,3 +1,6 @@
+import os
+
+import joblib
 import numpy as np
 from matplotlib import pyplot as plt
 from skimage import img_as_ubyte
@@ -208,10 +211,27 @@ def load_segmentation(imNumber):
     # Outputs :
         im: The loaded image.
     """
-
     filename = "./data/PH2Dataset/PH2 Dataset images/" + imNumber + "/" + imNumber + "_lesion/" + imNumber + "_lesion.bmp"
     try:
         im = imread(filename)
     except FileNotFoundError as exc:
         raise RuntimeError('Plase copy the PH2 dataset in /data/PH2Dataset/') from exc
     return im
+
+
+def save_model(model, name):
+    """Save a (Random Forest) classifier into a pickled file.
+
+    # Arguments :
+        model: Random Forest classifier.
+        name: String. Filename, without extension.
+
+    # Outputs :
+        im: The loaded image.
+    """
+    dir = './data/models/'
+    os.makedirs(dir)
+    joblib.dump(model, f"{dir}/{name}.pkl")
+
+def load_model(name):
+    return joblib.dump(f"{dir}/{name}.pkl")

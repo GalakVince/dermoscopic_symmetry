@@ -5,6 +5,15 @@ from dermoscopic_symmetry.utils import load_dermoscopic, load_segmentation
 from dermoscopic_symmetry.texture_symmetry import symmetryTextureEval
 
 
+def example():
+    """Usage example of the main functionalities within this file. """
+    df = pd.read_excel("./data/symtab.xlsx")
+    asymCoefs = df["Asymmetry"]
+    ims = df["Image Name"]
+    shapeScoresSaver(ims,asymCoefs,9)
+    textureScoresSaver(ims,asymCoefs,9)
+
+
 def shapeScoresSaver(ims, asymCoefs, stepAngle):
     """Create a "shapeScores.csv" file containing all shape symmetry scores over angles for each image of the PH2
        Dataset.
@@ -41,9 +50,8 @@ def shapeScoresSaver(ims, asymCoefs, stepAngle):
     df = pd.DataFrame({"Labels": labels})
     for k in range(int(180/stepAngle)+1):
         df["Shape score " + str(k)] = lists[k]
-    df.to_csv("../../ShapeScores.csv")
+    df.to_csv("./data/ShapeScores.csv")
 
-    return 0
 
 def textureScoresSaver(ims, asymCoefs, stepAngle):
     """Create a "textureScores.csv" file containing all texture symmetry scores over angles for each image of the PH2
@@ -83,14 +91,9 @@ def textureScoresSaver(ims, asymCoefs, stepAngle):
     df = pd.DataFrame({"Labels": labels})
     for k in range(int(180/stepAngle)+1):
         df["Texture score " + str(k)] = lists[k]
-    df.to_csv("../../TextureScores.csv")
+    df.to_csv("./data/TextureScores.csv")
 
-    return 0
 
-#---------------EXAMPLE------------------------------
-# df = pd.read_excel("../../symtab.xlsx")
-# asymCoefs = df["Asymmetry"]
-# ims = df["Image Name"]
-# shapeScoresSaver(ims,asymCoefs,9)
-# textureScoresSaver(ims,asymCoefs,9)
-#----------------------------------------------------
+# Run example() whenever running this script as main
+if __name__ == '__main__':
+    example()

@@ -349,7 +349,7 @@ def classifierTrainer(maxLeafNodes):
 
     acc = accuracy_score(valy, preds)
 
-    return (clf, acc)
+    return clf, acc
 
 
 # Run example() whenever running this script as main
