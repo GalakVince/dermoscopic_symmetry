@@ -184,7 +184,7 @@ def patchesForClassifier(im, segIm, patchSize):
 def textureDataExtractor(im, segIm, patchSize, nbBins):
     """Extract gray level co-occurence matrix's features (dissimilarity, correlation, energy, contrast and homogeneity)
        and color feature (color histogram for each RGB's channel) from patches taken in a dermoscopic image and stored
-       in the "patchesDataSet" folder and store them ("features.csv" in the same folder).
+       in the "patchesDataSet" folder and store them ("featuresForPreds.csv" in the same folder).
 
     # Arguments :
         im:        The dermoscopic image.
@@ -346,7 +346,7 @@ def textureDataExtractor(im, segIm, patchSize, nbBins):
             df["blue " + str(k + 1 - 5*nbBins) + "/" + str(nbBins) + " b"] = lists[k]
 
     # Create .csv file
-    df.to_csv(f"{package_path()}/data/patchesDataSet/features.csv")
+    df.to_csv(f"{package_path()}/data/patchesDataSet/featuresForPreds.csv")
 
     return (patchesUsed, points, reference)
 

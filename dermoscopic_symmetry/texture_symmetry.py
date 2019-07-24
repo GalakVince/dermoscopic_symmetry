@@ -19,13 +19,12 @@ def example(create_features=True):
 
     if create_features:
         dataExtractorForTraining(patchesPerImage=10, nbImages=199, nbBins=4)
-        clf, acc = classifierTrainer(100)
+        clf, acc = classifierTrainer(200)
 
     else:
         raise NotImplementedError
 
     res, ratios = symmetryTextureEval(im, segIm, 5)
-    print(ratios)
     displayTextureSymmetry(im, segIm, res)
 
     preds, nonSimilar, similar = symmetryTexturePred(clf)
@@ -35,7 +34,7 @@ def example(create_features=True):
 
 def symmetryTexturePred(classifier):
     """Predict if symetric pairs of patches taken in a dermoscopic image are similar or not using features extracted
-       with the `textureDataExtractor()` function and stored in the "feature.csv" file.
+       with the `textureDataExtractor()` function and stored in the "featureForPreds.csv" file.
 
     # Arguments :
         classifier:  The trained random forest classifier (with patchesDataSet).
@@ -45,7 +44,7 @@ def symmetryTexturePred(classifier):
         nonSimilarNum: Int. The number of non similar matches.
         similarNum:    Int. The number of similar matches.
     """
-    data = pd.read_csv(f"{package_path()}/data/patchesDataSet/features.csv")
+    data = pd.read_csv(f"{package_path()}/data/patchesDataSet/featuresForPreds.csv")
     features = list(data)
     del features[0]
 
