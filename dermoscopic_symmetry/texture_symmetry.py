@@ -46,7 +46,7 @@ def symmetryTexturePred(classifier):
         similarNum:    Int. The number of similar matches.
     """
 
-    data = pd.read_csv("./data/patchesDataSet/features.csv")
+    data = pd.read_csv(f"{package_path()}/patchesDataSet/features.csv")
     features = list(data)
     del features[0]
 
@@ -56,7 +56,8 @@ def symmetryTexturePred(classifier):
     nonSimilarNum = list(preds).count(0)
     similarNum = list(preds).count(1)
 
-    return (preds, nonSimilarNum, similarNum)
+    return preds, nonSimilarNum, similarNum
+
 
 def symmetryTextureEval(im, segIm, stepAngle):
     """Evaluate the textures symmetry of an image over a range of angles from 0 to 180 degrees. There are 3
@@ -128,6 +129,7 @@ def symmetryTextureEval(im, segIm, stepAngle):
         res = [1, [ind * stepAngle, simRatios[ind]], [None,None]]
 
     return (res,simRatios)
+
 
 def displaySimilarityMatches(im, segIm, preds, points, reference):
     """Display the map of similar and non similar matches over the original image thanks to respectively green and red

@@ -11,7 +11,7 @@ from skimage.io import imsave
 from skimage.measure import find_contours
 from skimage.segmentation import join_segmentations
 
-from dermoscopic_symmetry.utils import load_dermoscopic, load_segmentation
+from dermoscopic_symmetry.utils import load_dermoscopic, load_segmentation, package_path
 
 
 def randomPatchForDataset(image, segImage, patchSize, num, index):
@@ -70,7 +70,7 @@ def randomPatchForDataset(image, segImage, patchSize, num, index):
 
             points.append([ligne, col])
             rdpatch = img_as_ubyte(image[ligne: ligne + patchSize, col: col + patchSize])
-            imsave("./data/patchesDataSet/patch" + str(k) + "a.bmp", rdpatch)
+            imsave(f"{package_path()}/patchesDataSet/patch" + str(k) + "a.bmp", rdpatch)
             k += 1
 
         blk[rr,cc]=0
@@ -91,9 +91,8 @@ def datasetCreator(patchesPerImage, patchSize, overlap):
                 Only save the patches into a folder named "patchesDataSet". Then order the patches created into two new
                 folders (within the "patchesDataSet" folder) : "Similar" and "nonSimilar".
             """
-
-    os.makedirs('./data/patchesDataSet/')   # Make sure dirs exist.
-    df = pd.read_excel("./data/symtab.xlsx")
+    os.makedirs(f'{package_path()}/patchesDataSet/', exist_ok=True)   # Make sure dirs exist.
+    df = pd.read_excel(f"{package_path()}/symtab.xlsx")
     ims = df["Image Name"]
     ims = list(ims)
 
@@ -186,19 +185,19 @@ def datasetCreator(patchesPerImage, patchSize, overlap):
 
             if histoJoin00[0][-1] == patchSize * patchSize :
                 patch = img_as_ubyte(imCrop[pts[c][0] + overlap: pts[c][0] + overlap + patchSize, pts[c][1]: pts[c][1] + patchSize])
-                imsave("./data/patchesDataSet/patch" + str(k + countIndex * patchesPerImage) + "b.bmp", patch)
+                imsave(f"{package_path()}/patchesDataSet/patch" + str(k + countIndex * patchesPerImage) + "b.bmp", patch)
             elif histoJoin01[0][-1] == patchSize * patchSize :
                 patch = img_as_ubyte(imCrop[pts[c][0] - overlap: pts[c][0] - overlap + patchSize, pts[c][1]: pts[c][1] + patchSize])
-                imsave("./data/patchesDataSet/patch" + str(k + countIndex * patchesPerImage) + "b.bmp", patch)
+                imsave(f"{package_path()}/patchesDataSet/patch" + str(k + countIndex * patchesPerImage) + "b.bmp", patch)
             elif histoJoin10[0][-1] == patchSize * patchSize :
                 patch = img_as_ubyte(imCrop[pts[c][0]: pts[c][0] + patchSize, pts[c][1] + overlap: pts[c][1] + overlap + patchSize])
-                imsave("./data/patchesDataSet/patch" + str(k + countIndex * patchesPerImage) + "b.bmp", patch)
+                imsave(f"{package_path()}/patchesDataSet/patch" + str(k + countIndex * patchesPerImage) + "b.bmp", patch)
             elif histoJoin11[0][-1] == patchSize * patchSize :
                 patch = img_as_ubyte(imCrop[pts[c][0]: pts[c][0] + patchSize, pts[c][1] - overlap: pts[c][1] - overlap + patchSize])
-                imsave("./data/patchesDataSet/patch" + str(k + countIndex * patchesPerImage) + "b.bmp", patch)
+                imsave(f"{package_path()}/patchesDataSet/patch" + str(k + countIndex * patchesPerImage) + "b.bmp", patch)
             else :
                 patch = img_as_ubyte(imCrop[pts[c][0]: pts[c][0] + patchSize, pts[c][1]: pts[c][1] + patchSize])
-                imsave("./data/patchesDataSet/patch" + str(k + countIndex * patchesPerImage) + "b.bmp", patch)
+                imsave(f"{package_path()}/patchesDataSet/patch" + str(k + countIndex * patchesPerImage) + "b.bmp", patch)
 
             blk00[rr, cc] = 0
             blk01[rr, cc] = 0
@@ -234,34 +233,34 @@ def datasetCreator(patchesPerImage, patchSize, overlap):
                     rdInd = choice(indexesZero)
                     rdPt = pts[rdInd]
                     patch = img_as_ubyte(imCrop[rdPt[0]: rdPt[0] + patchSize, rdPt[1]: rdPt[1] + patchSize])
-                    imsave("./data/patchesDataSet/patch" + str(idx+countIndex*patchesPerImage) + "b.bmp", patch)
+                    imsave(f"{package_path()}/patchesDataSet/patch" + str(idx+countIndex*patchesPerImage) + "b.bmp", patch)
                 else :
                     actual = idx + countIndex*patchesPerImage
                     rdIdx = randint(0, actual-patchesPerImage)
-                    shutil.copyfile("./data/patchesDataSet/patch" + str(rdIdx) + "a.bmp", "./data/patchesDataSet/patch" + str(actual) + "b.bmp" )
+                    shutil.copyfile(f"{package_path()}/patchesDataSet/patch" + str(rdIdx) + "a.bmp", f"{package_path()}/patchesDataSet/patch" + str(actual) + "b.bmp" )
 
             else :
                 if indexesOne != []:
                     rdInd = choice(indexesOne)
                     rdPt = pts[rdInd]
                     patch = img_as_ubyte(imCrop[rdPt[0]: rdPt[0] + patchSize, rdPt[1]: rdPt[1] + patchSize])
-                    imsave("./data/patchesDataSet/patch" + str(idx+countIndex*patchesPerImage) + "b.bmp", patch)
+                    imsave(f"{package_path()}/patchesDataSet/patch" + str(idx+countIndex*patchesPerImage) + "b.bmp", patch)
                 else :
                     actual = idx + countIndex * patchesPerImage
                     rdIdx = randint(0, actual - patchesPerImage)
-                    shutil.copyfile("./data/patchesDataSet/patch" + str(rdIdx) + "a.bmp",
-                                           "./data/patchesDataSet/patch" + str(actual) + "b.bmp")
+                    shutil.copyfile(f"{package_path()}/patchesDataSet/patch" + str(rdIdx) + "a.bmp",
+                                           f"{package_path()}/patchesDataSet/patch" + str(actual) + "b.bmp")
 
     #---------------Move created pairs of patches to the Similar or nonSimilar folder-----------------
     for compteur in range(0 , (len(ims)*patchesPerImage)):
         crit = compteur//int(patchesPerImage/2)
         if (crit%2 == 0):
-            shutil.move("./data/patchesDataSet/patch" + str(compteur) + "a.bmp", "./data/patchesDataSet/Similar/patch" + str(compteur) + "a.bmp")
-            shutil.move("./data/patchesDataSet/patch" + str(compteur) + "b.bmp",
-                        "./data/patchesDataSet/Similar/patch" + str(compteur) + "b.bmp")
+            shutil.move(f"{package_path()}/patchesDataSet/patch" + str(compteur) + "a.bmp", f"{package_path()}/patchesDataSet/Similar/patch" + str(compteur) + "a.bmp")
+            shutil.move(f"{package_path()}/patchesDataSet/patch" + str(compteur) + "b.bmp",
+                        f"{package_path()}/patchesDataSet/Similar/patch" + str(compteur) + "b.bmp")
 
         else :
-            shutil.move("./data/patchesDataSet/patch" + str(compteur) + "a.bmp",
-                        "./data/patchesDataSet/nonSimilar/patch" + str(compteur) + "a.bmp")
-            shutil.move("./data/patchesDataSet/patch" + str(compteur) + "b.bmp",
-                        "./data/patchesDataSet/nonSimilar/patch" + str(compteur) + "b.bmp")
+            shutil.move(f"{package_path()}/patchesDataSet/patch" + str(compteur) + "a.bmp",
+                        f"{package_path()}/patchesDataSet/nonSimilar/patch" + str(compteur) + "a.bmp")
+            shutil.move(f"{package_path()}/patchesDataSet/patch" + str(compteur) + "b.bmp",
+                        f"{package_path()}/patchesDataSet/nonSimilar/patch" + str(compteur) + "b.bmp")

@@ -8,13 +8,15 @@ from skimage.io import imread
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 
+from dermoscopic_symmetry.utils import package_path
+
 
 def example():
     """Usage example of the main functionalities within this file. """
     dataExtractorForTraining(10, 199, 4)
     classifier, accScore = classifierTrainer(200)
     print(f'Accuracy score: {accScore}')
-    joblib.dump(classifier, "./data/similarityModel.pkl")
+    joblib.dump(classifier, f"{package_path()}//data/similarityModel.pkl")
 
 
 def load_patches(patchNumber, subdir):
@@ -29,9 +31,9 @@ def load_patches(patchNumber, subdir):
         patch_b: Second patch.
     """
 
-    filename_a = f"data/patchesDataSet/{subdir}/patch{patchNumber}a.bmp"
+    filename_a = f"{package_path()}/data/patchesDataSet/{subdir}/patch{patchNumber}a.bmp"
     patch_a = imread(filename_a)
-    filename_b = f"data/patchesDataSet/{subdir}/patch{patchNumber}b.bmp"
+    filename_b = f"{package_path()}/data/patchesDataSet/{subdir}/patch{patchNumber}b.bmp"
     patch_b = imread(filename_b)
     return patch_a, patch_b
 
@@ -315,7 +317,7 @@ def dataExtractorForTraining(patchesPerImage, nbImages, nbBins=4):
 
     df["Result"] = resultList
 
-    df.to_csv("./data/patchesDataSet/features.csv")
+    df.to_csv(f"{package_path()}/data/patchesDataSet/features.csv")
 
 
 def classifierTrainer(maxLeafNodes):
@@ -331,7 +333,7 @@ def classifierTrainer(maxLeafNodes):
         acc: The accuracy score of the classifier
     """
 
-    data = pd.read_csv("./data/patchesDataSet/features.csv")
+    data = pd.read_csv(f"{package_path()}/data/patchesDataSet/features.csv")
 
     features = list(data)
     del features[0]      # Remove feature index

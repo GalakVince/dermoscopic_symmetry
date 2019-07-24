@@ -2,6 +2,7 @@ import os
 
 import joblib
 import numpy as np
+import pandas as pd
 from matplotlib import pyplot as plt
 from skimage import img_as_ubyte
 from skimage.io import imread
@@ -194,7 +195,7 @@ def load_dermoscopic(imNumber) :
     # Outputs :
         im: The loaded image.
     """
-    filename = "./data/PH2Dataset/PH2 Dataset images/" + imNumber + "/" + imNumber + "_Dermoscopic_Image/" + imNumber + ".bmp"
+    filename = f"{package_path()}/data/PH2Dataset/PH2 Dataset images/{imNumber}/{imNumber}_Dermoscopic_Image/{imNumber}.bmp"
     try:
         im = imread(filename)
     except FileNotFoundError as exc:
@@ -211,7 +212,7 @@ def load_segmentation(imNumber):
     # Outputs :
         im: The loaded image.
     """
-    filename = "./data/PH2Dataset/PH2 Dataset images/" + imNumber + "/" + imNumber + "_lesion/" + imNumber + "_lesion.bmp"
+    filename = f"{package_path()}/data/PH2Dataset/PH2 Dataset images/{imNumber}/{imNumber}_lesion/{imNumber}_lesion.bmp"
     try:
         im = imread(filename)
     except FileNotFoundError as exc:
@@ -229,9 +230,17 @@ def save_model(model, name):
     # Outputs :
         im: The loaded image.
     """
-    dir = './data/models/'
-    os.makedirs(dir)
+    dir = f'{package_path()}/data/models/'
+    os.makedirs(dir, exist_ok=True)
     joblib.dump(model, f"{dir}/{name}.pkl")
 
 def load_model(name):
-    return joblib.dump(f"{dir}/{name}.pkl")
+    return joblib.load(f"{dir}/{name}.pkl")
+
+
+def load_PH2_asymmetry_GT():
+    df = pd.read_excel(f"{package_path()}/data/symtab.xlsx")
+    return df["Image Name"], df["Asymmetry"]
+
+def package_path():
+    return os.path.dirname(os.path.abspath(__file__))
