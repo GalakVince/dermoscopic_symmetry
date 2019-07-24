@@ -68,7 +68,7 @@ def randomPatchForDataset(image, segImage, patchSize, num, index):
 
             points.append([ligne, col])
             rdpatch = img_as_ubyte(image[ligne: ligne + patchSize, col: col + patchSize])
-            imsave("../../patchesDataSet/patch" + str(k) + "a.bmp", rdpatch)
+            imsave("../../patch" + str(k) + "a.bmp", rdpatch)
             k += 1
 
         blk[rr,cc]=0
@@ -268,3 +268,7 @@ def datasetCreator(patchesPerImage, patchSize, overlap):
                         "../../patchesDataSet/nonSimilar/patch" + str(compteur) + "b.bmp")
 
     return 0
+
+#--------EXAMPLE---------
+# datasetCreator(10, 32, 8)
+#------------------------
