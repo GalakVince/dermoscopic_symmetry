@@ -47,6 +47,7 @@ def withinLesionPatchesExtractor(image, segImage, patchSize):
             extent = (patchSize, patchSize)
             rr, cc = rectangle(start, extent=extent)
             blk[rr, cc] = 1
+            image[rr,cc] = 0
 
             join = join_segmentations(blk, segImage)
             histoJoin = histogram(join)
