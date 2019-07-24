@@ -234,7 +234,9 @@ def save_model(model, name):
     os.makedirs(dir, exist_ok=True)
     joblib.dump(model, f"{dir}/{name}.pkl")
 
+
 def load_model(name):
+    dir = f'{package_path()}/data/models/'
     return joblib.load(f"{dir}/{name}.pkl")
 
 

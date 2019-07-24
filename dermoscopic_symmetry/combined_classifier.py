@@ -6,15 +6,13 @@ from sklearn.metrics import accuracy_score
 from dermoscopic_symmetry.shape_symmetry import shape_symmetry_ratios
 from dermoscopic_symmetry.texture_symmetry import symmetryTextureEval
 from dermoscopic_symmetry.utils import package_path, load_PH2_asymmetry_GT, load_segmentation, load_dermoscopic, \
-    save_model
+    save_model, load_model
 
 
 def example():
     """Usage example of the main functionalities within this file. """
     accShape, accTexture, accFinal = train_and_eval_all_models()
-    print(accShape)
-    print(accTexture)
-    print(accFinal)
+    print(f'Accuracy -- only shape: {accShape}; only texture: {accTexture}; combined: {accFinal}.')
 
 
 def shape_symmetry_scores(stepAngle=9, filename_to_save='ShapeScores'):
