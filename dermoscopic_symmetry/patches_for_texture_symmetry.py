@@ -1,16 +1,22 @@
-from skimage.segmentation import *
-from skimage.measure import *
-from skimage.draw import *
-from skimage.exposure import *
-from skimage.feature import *
-from skimage.color import *
-from skimage import img_as_ubyte
-
-from code.classifierFeeder import listCreator
-from code.shapeSymmetry import pig2load, seg2load
-
 import numpy as np
 import pandas as pd
+from skimage import img_as_ubyte
+from skimage.color import rgb2gray
+from skimage.draw import rectangle
+from skimage.exposure import histogram
+from skimage.feature import greycomatrix, greycoprops
+from skimage.measure import find_contours, regionprops
+from skimage.segmentation import join_segmentations
+
+from dermoscopic_symmetry.classifier_feeder import list_creator
+from dermoscopic_symmetry.utils import load_segmentation, load_dermoscopic, package_path
+
+
+def example():
+    im = load_dermoscopic("IMD400")
+    segIm = load_segmentation("IMD400")
+    patchesUsed, points, reference = textureDataExtractor(im, segIm, 32, 4)
+
 
 def withinLesionPatchesExtractor(image, segImage, patchSize):
     """Extract patches only taken within the lesion.
@@ -174,6 +180,7 @@ def patchesForClassifier(im, segIm, patchSize):
 
     return (n,pointsUsed,indexes,reference, patches)
 
+
 def textureDataExtractor(im, segIm, patchSize, nbBins):
     """Extract gray level co-occurence matrix's features (dissimilarity, correlation, energy, contrast and homogeneity)
        and color feature (color histogram for each RGB's channel) from patches taken in a dermoscopic image and stored
@@ -209,7 +216,7 @@ def textureDataExtractor(im, segIm, patchSize, nbBins):
     contrastListb = []
     homogeneityListb = []
 
-    lists = listCreator(nbBins)
+    lists = list_creator(nbBins)
 
     for index in range(0, int(len(patches)/2)) :
 
@@ -339,12 +346,11 @@ def textureDataExtractor(im, segIm, patchSize, nbBins):
             df["blue " + str(k + 1 - 5*nbBins) + "/" + str(nbBins) + " b"] = lists[k]
 
     # Create .csv file
-    df.to_csv("../patchesDataSet/features.csv")
+    df.to_csv(f"{package_path()}/data/patchesDataSet/features.csv")
 
     return (patchesUsed, points, reference)
 
-#----------------EXAMPLE----------------------------------------------
-# im = pig2load("IMD400")
-# segIm = seg2load("IMD400")
-# patchesUsed, points, reference = textureDataExtractor(im, segIm, 32, 4)
-#---------------------------------------------------------------------
+
+# Run example() whenever running this script as main
+if __name__ == '__main__':
+    example()

@@ -1,73 +1,44 @@
-from skimage.io import *
-from skimage.exposure import *
-from skimage.feature import *
-from skimage.color import *
+import joblib
+import pandas as pd
 from skimage import img_as_ubyte
-
+from skimage.color import rgb2gray
+from skimage.exposure import histogram
+from skimage.feature import greycomatrix, greycoprops
+from skimage.io import imread
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 
-import joblib
-import pandas as pd
+from dermoscopic_symmetry.utils import package_path, save_model
 
 
-def aSimilarLoader(patchNumber):
-    """Load a "a" patch from the patchesDataSet into "Similar" folder.
+def example():
+    """Usage example of the main functionalities within this file. """
+    dataExtractorForTraining(10, 199, 4)
+    classifier, accScore = classifierTrainer(200)
+    print(f'Accuracy score: {accScore}')
+    save_model(classifier, "SimilarPatchClassifier")
 
-    # Arguments :
-        patchNumber: Int. The number of the patch to be loaded.
 
-    # Outputs :
-        patch: The loaded patch.
-    """
-
-    filename = "../patchesDataSet/Similar/patch" + str(patchNumber) + "a.bmp"
-    patch = imread(filename)
-    return patch
-
-def bSimilarLoader(patchNumber):
-    """Load a "b" patch from the patchesDataSet into "Similar" folder.
+def load_patches(patchNumber, subdir):
+    """Load pairs of patches from the data/patchesDataSet from the specified subfolder.
 
     # Arguments :
         patchNumber: Int. The number of the patch to be loaded.
+        subdir: Either 'Similar' or 'nonSimilar'
 
     # Outputs :
-        patch: The loaded patch.
+        patch_a: First patch.
+        patch_b: Second patch.
     """
 
-    filename = "../patchesDataSet/Similar/patch" + str(patchNumber) + "b.bmp"
-    patch = imread(filename)
-    return patch
+    filename_a = f"{package_path()}/data/patchesDataSet/{subdir}/patch{patchNumber}a.bmp"
+    patch_a = imread(filename_a)
+    filename_b = f"{package_path()}/data/patchesDataSet/{subdir}/patch{patchNumber}b.bmp"
+    patch_b = imread(filename_b)
+    return patch_a, patch_b
 
-def aNonSimilarLoader(patchNumber):
-    """Load a "a" patch from the patchesDataSet into "nonSimilar" folder.
 
-    # Arguments :
-        patchNumber: Int. The number of the patch to be loaded.
-
-    # Outputs :
-        patch: The loaded patch.
-    """
-
-    filename = "../patchesDataSet/nonSimilar/patch" + str(patchNumber) + "a.bmp"
-    patch = imread(filename)
-    return patch
-
-def bNonSimilarLoader(patchNumber):
-    """Load a "b" patch from the patchesDataSet into "nonSimilar" folder.
-
-    # Arguments :
-        patchNumber: Int. The number of the patch to be loaded.
-
-    # Outputs :
-        patch: The loaded patch.
-    """
-
-    filename = "../patchesDataSet/nonSimilar/patch" + str(patchNumber) + "b.bmp"
-    patch = imread(filename)
-    return patch
-
-def listCreator(nbBins):
+def list_creator(nbBins):
     """Create the necessary number of lists to compute colors feature extraction.
 
     # Arguments :
@@ -76,16 +47,13 @@ def listCreator(nbBins):
     # Outputs :
         lists: A list of 2*3*`nbBins` empty lists.
     """
-
-    lists = []
     nbLists = 2*3*nbBins
-    for k in range(nbLists):
-        lists.append([])
-    return lists
+    return [[] for _ in range(nbLists)]
 
-def dataExtractorForTraining(patchesPerImage, nbImages, nbBins):
+
+def dataExtractorForTraining(patchesPerImage, nbImages, nbBins=4):
     """Create a file "features.csv" containing glcm features and colors feature extracted from all patches of the
-       "patchesDataSet" folder. This file is saved in this "patchesDtaSet folder.
+       "patchesDataSet" folder. This file is saved in the "patchesDataSet folder.
 
     # Arguments :
         patchesPerImage: The amount of patches wanted for each image.
@@ -109,7 +77,7 @@ def dataExtractorForTraining(patchesPerImage, nbImages, nbBins):
     contrastListb = []
     homogeneityListb = []
 
-    lists = listCreator(nbBins)
+    lists = list_creator(nbBins)
 
     resultList = []
 
@@ -119,27 +87,25 @@ def dataExtractorForTraining(patchesPerImage, nbImages, nbBins):
 
         if crit%2 == 0 :
 
-            patcha = aSimilarLoader(patchCount)
+            patch_a, patch_b = load_patches(patchCount, subdir='Similar')
 
-            reda = patcha[:, :, 0]
-            greena = patcha[:, :, 1]
-            bluea = patcha[:, :, 2]
+            reda = patch_a[:, :, 0]
+            greena = patch_a[:, :, 1]
+            bluea = patch_a[:, :, 2]
 
-            patcha = rgb2gray(patcha)
-            patcha = img_as_ubyte(patcha)
+            patch_a = rgb2gray(patch_a)
+            patch_a = img_as_ubyte(patch_a)
 
-            patchb = bSimilarLoader(patchCount)
+            redb = patch_b[:, :, 0]
+            greenb = patch_b[:, :, 1]
+            blueb = patch_b[:, :, 2]
 
-            redb = patchb[:, :, 0]
-            greenb = patchb[:, :, 1]
-            blueb = patchb[:, :, 2]
-
-            patchb = rgb2gray(patchb)
-            patchb = img_as_ubyte(patchb)
+            patch_b = rgb2gray(patch_b)
+            patch_b = img_as_ubyte(patch_b)
 
             # Compute glcm features extraction
-            glcma = greycomatrix(patcha, [2], [0])
-            glcmb = greycomatrix(patchb, [2], [0])
+            glcma = greycomatrix(patch_a, [2], [0])
+            glcmb = greycomatrix(patch_b, [2], [0])
 
             dissimilaritya = greycoprops(glcma, 'dissimilarity')[0, 0]
             correlationa = greycoprops(glcma, 'correlation')[0, 0]
@@ -223,27 +189,25 @@ def dataExtractorForTraining(patchesPerImage, nbImages, nbBins):
 
         else :
 
-            patcha = aNonSimilarLoader(patchCount)
+            patch_a, patch_b = load_patches(patchCount, subdir='nonSimilar')
 
-            reda = patcha[:, :, 0]
-            greena = patcha[:, :, 1]
-            bluea = patcha[:, :, 2]
+            reda = patch_a[:, :, 0]
+            greena = patch_a[:, :, 1]
+            bluea = patch_a[:, :, 2]
 
-            patcha = rgb2gray(patcha)
-            patcha = img_as_ubyte(patcha)
+            patch_a = rgb2gray(patch_a)
+            patch_a = img_as_ubyte(patch_a)
 
-            patchb = bNonSimilarLoader(patchCount)
+            redb = patch_b[:, :, 0]
+            greenb = patch_b[:, :, 1]
+            blueb = patch_b[:, :, 2]
 
-            redb = patchb[:, :, 0]
-            greenb = patchb[:, :, 1]
-            blueb = patchb[:, :, 2]
-
-            patchb = rgb2gray(patchb)
-            patchb = img_as_ubyte(patchb)
+            patch_b = rgb2gray(patch_b)
+            patch_b = img_as_ubyte(patch_b)
 
             # Compute glcm features extraction
-            glcma = greycomatrix(patcha, [2], [0])
-            glcmb = greycomatrix(patchb, [2], [0])
+            glcma = greycomatrix(patch_a, [2], [0])
+            glcmb = greycomatrix(patch_b, [2], [0])
 
             dissimilaritya = greycoprops(glcma, 'dissimilarity')[0, 0]
             correlationa = greycoprops(glcma, 'correlation')[0, 0]
@@ -353,9 +317,8 @@ def dataExtractorForTraining(patchesPerImage, nbImages, nbBins):
 
     df["Result"] = resultList
 
-    df.to_csv("../patchesDataSet/features.csv")
+    df.to_csv(f"{package_path()}/data/patchesDataSet/features.csv")
 
-    return 0
 
 def classifierTrainer(maxLeafNodes):
     """Train a random forest classifier with data from the patchesDataSet.
@@ -370,11 +333,11 @@ def classifierTrainer(maxLeafNodes):
         acc: The accuracy score of the classifier
     """
 
-    data = pd.read_csv("../patchesDataSet/features.csv")
+    data = pd.read_csv(f"{package_path()}/data/patchesDataSet/features.csv")
 
     features = list(data)
-    del features[0]
-    del features[-1]
+    del features[0]      # Remove feature index
+    del features[-1]     # Remove `Result` colname.
 
     trainX = data[features][500:]
     trainy = data.Result[500:]
@@ -388,11 +351,9 @@ def classifierTrainer(maxLeafNodes):
 
     acc = accuracy_score(valy, preds)
 
-    return (clf, acc)
+    return clf, acc
 
-#-----------------EXAMPLE-----------------------
-# dataExtractorForTraining(10,199,4)
-# classifier, accScore = classifierTrainer(200)
-# print(accScore)
-# joblib.dump(classifier, "similarityModel.pkl")
-#-----------------------------------------------
+
+# Run example() whenever running this script as main
+if __name__ == '__main__':
+    example()
