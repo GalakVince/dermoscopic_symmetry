@@ -9,7 +9,7 @@ from skimage.measure import find_contours, regionprops
 from skimage.segmentation import join_segmentations
 
 from dermoscopic_symmetry.classifier_feeder import list_creator
-from dermoscopic_symmetry.utils import load_segmentation, load_dermoscopic
+from dermoscopic_symmetry.utils import load_segmentation, load_dermoscopic, package_path
 
 
 def example():
@@ -345,7 +345,7 @@ def textureDataExtractor(im, segIm, patchSize, nbBins):
             df["blue " + str(k + 1 - 5*nbBins) + "/" + str(nbBins) + " b"] = lists[k]
 
     # Create .csv file
-    df.to_csv(f"{package_path()}/patchesDataSet/features.csv")
+    df.to_csv(f"{package_path()}/data/patchesDataSet/features.csv")
 
     return (patchesUsed, points, reference)
 

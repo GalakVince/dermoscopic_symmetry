@@ -8,7 +8,7 @@ from skimage.measure import regionprops, find_contours
 from skimage.transform import rotate
 
 from dermoscopic_symmetry.classifier_feeder import classifierTrainer, dataExtractorForTraining
-from dermoscopic_symmetry.patches_for_symmetry import textureDataExtractor
+from dermoscopic_symmetry.patches_for_texture_symmetry import textureDataExtractor
 from dermoscopic_symmetry.utils import load_dermoscopic, load_segmentation, displayTextureSymmetry
 
 
