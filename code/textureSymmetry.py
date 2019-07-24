@@ -10,11 +10,11 @@ import numpy as np
 
 from code.classifierFeeder import classifierTrainer
 from code.patchesForSymmetry import textureDataExtractor
-
+from code.shapeSymmetry import seg2load, pig2load
 
 def symmetryTexturePred(classifier):
-    """Predict if symetric pairs of patches taken in a dermoscopic image are similar or not using features extracted
-       with the `textureDataExtractor()` function and stored in the "feature.csv" file.
+    """Predict if symmetric pairs of patches taken in a dermoscopic image are similar or not using features extracted
+       with the `textureDataExtractor()` function and stored in the "featureForPreds.csv" file.
 
     # Arguments :
         classifier:  The trained random forest classifier (with patchesDataSet).
@@ -25,7 +25,7 @@ def symmetryTexturePred(classifier):
         similarNum:    Int. The number of similar matches.
     """
 
-    data = pd.read_csv("../patchesDataSet/features.csv")
+    data = pd.read_csv("../patchesDataSet/featuresForPreds.csv")
     features = list(data)
     del features[0]
 
@@ -64,7 +64,7 @@ def symmetryTextureEval(im, segIm, stepAngle):
     properties = regionprops(segIm)
     originalCentroid = properties[0].centroid
 
-    classifier, accScore = classifierTrainer(100)
+    classifier, accScore = classifierTrainer(200)
 
     angles = [-k for k in range(0, 181, stepAngle)]
     simRatios = []
@@ -90,12 +90,12 @@ def symmetryTextureEval(im, segIm, stepAngle):
         else:
             indOrtho = ind - int(90 / stepAngle)
 
-        if simRatios[indOrtho] >= 0.70:
+        if simRatios[indOrtho] >= 0.63:
             res = [0, [ind*stepAngle, simRatios[ind]], [indOrtho*stepAngle, simRatios[indOrtho]]]
         else :
             res = [1, [ind * stepAngle, simRatios[ind]], [None,None]]
 
-    elif simRatios[ind] <= 0.70:
+    elif simRatios[ind] <= 0.63:
 
         if min(simRatios) <= 0.45:
             res = [2, [None,None], [None,None]]
@@ -305,7 +305,7 @@ def displayTextureSymmetry(im, segIm, symmetry):
         axs[1].plot(x, y, "-r", linewidth=2)
         axs[1].plot(xOrtho, yOrtho, "-r", linewidth=0.8)
         axs[1].imshow(im, cmap=plt.cm.gray)
-        axs[1].set_title("Main symmetry axis")
+        axs[1].set_title("Main and second symmetry axes")
         axs[1].axis("off")
         plt.show()
 
@@ -339,14 +339,13 @@ def displayTextureSymmetry(im, segIm, symmetry):
     return 0
 
 #-------------EXAMPLE------------------------------
-# im = pig2load("IMD009")
-# segIm = seg2load("IMD009")
+# im = pig2load("IMD435")
+# segIm = seg2load("IMD435")
 # res, ratios = symmetryTextureEval(im, segIm, 5)
-# print(ratios)
 # displayTextureSymmetry(im, segIm, res)
 
-# clf, acc = classifierTrainer(100)
-# preds, nonSimilar, similar = symmetryTexturePred(clf)
+# clf, acc = classifierTrainer(200)
 # patches, points, reference = textureDataExtractor(im, segIm, 32, 4)
+# preds, nonSimilar, similar = symmetryTexturePred(clf)
 # displaySimilarityMatches(im, segIm, preds, points, reference)
 #--------------------------------------------------
