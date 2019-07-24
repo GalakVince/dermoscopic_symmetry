@@ -83,7 +83,6 @@ def symmetryRatios(segImage, stepAngle):
             black[0:lenIm2compare , 0:np.shape(rotIm)[1]] = rotIm[int(centroid[0]):np.shape(rotIm)[0],0:np.shape(rotIm)[1]]
             im2compare = black
 
-
         histoComp = histogram(im2compare)
         histoFlip = histogram(flipIm)
 
@@ -220,7 +219,7 @@ def displayShapesSymmetry(im, segIm, symmetry):
         axs[2].plot(x, y, "-r", linewidth=2)
         axs[2].plot(xOrtho, yOrtho, "-r", linewidth=0.8)
         axs[2].imshow(segIm, cmap=plt.cm.gray)
-        axs[2].set_title("Main symmetry axis")
+        axs[2].set_title("Main and second symmetry axes")
         axs[2].axis("off")
         plt.show()
 
@@ -277,9 +276,9 @@ def displayShapesSymmetry(im, segIm, symmetry):
     return 0
 
 #----------EXAMPLE-------------------------
-# segIm = seg2load("IMD400")
-# im = pig2load("IMD400")
-# sym, out = symmetryShapeEval(segIm, 9)
+# segIm = seg2load("IMD035")
+# im = pig2load("IMD035")
+# sym = symmetryShapeEval(segIm, 3)
 # print(sym)
 # displayShapesSymmetry(im, segIm,sym)
 #------------------------------------------
