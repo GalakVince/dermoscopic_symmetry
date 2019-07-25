@@ -8,13 +8,13 @@ from skimage.transform import rotate
 from dermoscopic_symmetry.classifier_feeder import classifierTrainer, dataExtractorForTraining
 from dermoscopic_symmetry.patches_for_texture_symmetry import texture_symmetry_features
 from dermoscopic_symmetry.utils import load_dermoscopic, load_segmentation, displayTextureSymmetry, package_path, \
-    displaySimilarityMatches, display_symmetry_axes
+    display_similarity_matches, display_symmetry_axes
 
 
 def example(create_features=True):
     """Usage example of the main functionalities within this file. """
-    im = load_dermoscopic("IMD009")
-    segIm = load_segmentation("IMD009")
+    img = load_dermoscopic("IMD400")
+    segm = load_segmentation("IMD400")
 
     if create_features:
         dataExtractorForTraining(patchesPerImage=10, nbImages=199, nbBins=4)
@@ -23,12 +23,12 @@ def example(create_features=True):
     else:
         raise NotImplementedError
 
-    res, ratios = texture_symmetry(im, segIm, 5)
-    display_symmetry_axes(im, segIm, res, title='Texture symmetry')
+    symmetry_info, ratios = texture_symmetry(img, segm, 5)
+    display_symmetry_axes(img, segm, symmetry_info, title='Texture symmetry')
 
     preds, nonSimilar, similar = texture_symmetry_predict_patches(clf)
-    patches, points, reference = texture_symmetry_features(im, segIm, 32, 4)
-    displaySimilarityMatches(im, segIm, preds, points, reference)
+    patches, points, reference = texture_symmetry_features(img, segm, 32, 4)
+    display_similarity_matches(img, segm, preds, points, reference)
 
 
 def texture_symmetry_predict_patches(classifier, data=None, data_backup_file='FeaturesForPreds'):
