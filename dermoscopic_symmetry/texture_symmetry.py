@@ -23,11 +23,11 @@ def example(retrain_model=False, sample_name='IMD400'):
     else:
         clf = load_model('PatchClassifierModel')
 
-    symmetry_info, ratios = texture_symmetry(img, segm, stepAngle=20, classifier=clf)
-    display_symmetry_axes(img, segm, symmetry_info, title='Texture symmetry')
+    # symmetry_info, ratios = texture_symmetry(img, segm, stepAngle=20, classifier=clf)
+    # display_symmetry_axes(img, segm, symmetry_info, title='Texture symmetry')
 
     display_similarity_matches(img, segm, patchSize=32, nbBins=4, classifier=clf,
-                               axis_in_degrees=symmetry_info[1][0])
+                               axis_in_degrees=30)
 
 
 def texture_symmetry_predict_patches(classifier, data=None, data_backup_file='FeaturesForPreds'):
@@ -44,7 +44,7 @@ def texture_symmetry_predict_patches(classifier, data=None, data_backup_file='Fe
         nonSimilarNum: Int. The number of non similar matches.
         similarNum:    Int. The number of similar matches.
     """
-    if data is not None:
+    if data is None:
         data = pd.read_csv(f"{package_path()}/data/patchesDataSet/{data_backup_file}.csv", index_col=False)
         features = list(data)
         del features[0]

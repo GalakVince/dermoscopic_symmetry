@@ -165,8 +165,8 @@ def display_similarity_matches(img, segm, patchSize, nbBins, classifier, axis_in
         segm = img_as_ubyte(segm / 255)
         properties = regionprops(segm)
         centroid = properties[0].centroid
-        img = rotate(img, angle=axis_in_degrees, resize=True, center=centroid)
-        segm = rotate(segm, angle=axis_in_degrees, resize=True, center=centroid)
+        img = rotate(img, angle=axis_in_degrees, center=centroid, mode='symmetric')
+        segm = rotate(segm, angle=axis_in_degrees, center=centroid)
 
     # Rotate and crop images to be centered on the lesion
     blkSeg = np.zeros((np.shape(segm)[0] + 2, np.shape(segm)[1] + 2))
