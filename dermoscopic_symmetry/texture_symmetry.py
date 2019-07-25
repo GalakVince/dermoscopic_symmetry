@@ -8,22 +8,22 @@ from skimage.transform import rotate
 from dermoscopic_symmetry.classifier_feeder import classifierTrainer, dataExtractorForTraining
 from dermoscopic_symmetry.patches_for_texture_symmetry import texture_symmetry_features
 from dermoscopic_symmetry.utils import load_dermoscopic, load_segmentation, displayTextureSymmetry, package_path, \
-    display_similarity_matches, display_symmetry_axes
+    display_similarity_matches, display_symmetry_axes, load_model
 
 
-def example(create_features=True):
+def example(retrain_model=False, sample_name='IMD400'):
     """Usage example of the main functionalities within this file. """
-    img = load_dermoscopic("IMD400")
-    segm = load_segmentation("IMD400")
+    img = load_dermoscopic(sample_name)
+    segm = load_segmentation(sample_name)
 
-    if create_features:
+    if retrain_model:
         dataExtractorForTraining(patchesPerImage=10, nbImages=199, nbBins=4)
         clf, acc = classifierTrainer(200)
 
     else:
-        raise NotImplementedError
+        clf = load_model('PatchClassifierModel')
 
-    symmetry_info, ratios = texture_symmetry(img, segm, 5)
+    symmetry_info, ratios = texture_symmetry(img, segm, 5, clf)
     display_symmetry_axes(img, segm, symmetry_info, title='Texture symmetry')
 
     preds, nonSimilar, similar = texture_symmetry_predict_patches(clf)
@@ -58,7 +58,7 @@ def texture_symmetry_predict_patches(classifier, data=None, data_backup_file='Fe
     return preds, nonSimilarNum, similarNum
 
 
-def texture_symmetry(im, segIm, stepAngle):
+def texture_symmetry(im, segIm, stepAngle, classifier=None):
     """Evaluate the textures symmetry of an image over a range of angles from 0 to 180 degrees. There are 3
        possibilities : symmetric (at least 2 axis), not fully symmetric (1-axis symmetry), or asymmetric.
 
@@ -67,6 +67,7 @@ def texture_symmetry(im, segIm, stepAngle):
         segIm:     The corresponding segmented image.
         stepAngle: Int. The step used to go from 0 to 180 degrees. Each angle permits to score symmetry in the
                    corresponding orientation
+        classifier: Classifier (e.g. from load_model) or None to retrain
 
     # Outputs :
         res:      List containing symmetry result (res[0]), percentage of symmetry of the main axe and angle from the
@@ -85,7 +86,8 @@ def texture_symmetry(im, segIm, stepAngle):
     properties = regionprops(segIm)
     originalCentroid = properties[0].centroid
 
-    classifier, accScore = classifierTrainer(100)
+    if not classifier:
+        classifier, _ = classifierTrainer(100)
 
     angles = [-k for k in range(0, 181, stepAngle)]
     simRatios = []

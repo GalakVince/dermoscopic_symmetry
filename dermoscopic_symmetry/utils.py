@@ -164,6 +164,7 @@ def display_similarity_matches(im, segIm, preds, points, reference):
 
     plt.show()
 
+
 def draw_similarity_matches(figure_axis, im, segIm, preds, points, reference):
     # Crop images to be centered on the lesion
     blkSeg = np.zeros((np.shape(segIm)[0] + 2, np.shape(segIm)[1] + 2))

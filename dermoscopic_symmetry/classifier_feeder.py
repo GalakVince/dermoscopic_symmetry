@@ -51,7 +51,8 @@ def list_creator(nbBins):
     return [[] for _ in range(nbLists)]
 
 
-def dataExtractorForTraining(patchesPerImage, nbImages, nbBins=4):
+def dataExtractorForTraining(patchesPerImage, nbImages, nbBins=4,
+                             filename_to_save='FeaturesForTraining'):
     """Create a file "features.csv" containing glcm features and colors feature extracted from all patches of the
        "patchesDataSet" folder. This file is saved in the "patchesDataSet folder.
 
@@ -60,6 +61,7 @@ def dataExtractorForTraining(patchesPerImage, nbImages, nbBins=4):
         nbImages:        Int. The amout of images from the PH2Dataset used to extract features.
         nbBins:          Int. The number of bins wanted for color histogram. For example, 4 bins means the color
                          histogram will be divided into 4 parts.
+        filename_to_save: String or None.
 
     # Outputs :
         Only save the "features.csv" file.
@@ -317,10 +319,14 @@ def dataExtractorForTraining(patchesPerImage, nbImages, nbBins=4):
 
     df["Result"] = resultList
 
-    df.to_csv(f"{package_path()}/data/patchesDataSet/features.csv")
+    if filename_to_save:
+        df.to_csv(f"{package_path()}/data/patchesDataSet/{filename_to_save}.csv")
+
+    return df
 
 
-def classifierTrainer(maxLeafNodes):
+def classifierTrainer(maxLeafNodes, data=None, data_backup_file='patchesDataSet/Features',
+                      filename_to_save_model='PatchClassifierModel'):
     """Train a random forest classifier with data from the patchesDataSet.
 
     # Arguments :
@@ -333,7 +339,7 @@ def classifierTrainer(maxLeafNodes):
         acc: The accuracy score of the classifier
     """
 
-    data = pd.read_csv(f"{package_path()}/data/patchesDataSet/features.csv")
+    data = data or pd.read_csv(f"{package_path()}/data/{data_backup_file}.csv")
 
     features = list(data)
     del features[0]      # Remove feature index
@@ -346,6 +352,9 @@ def classifierTrainer(maxLeafNodes):
 
     clf = RandomForestClassifier(max_leaf_nodes=maxLeafNodes, random_state=2)
     clf.fit(trainX, trainy)
+
+    if filename_to_save_model:
+        save_model(clf, filename_to_save_model)
 
     preds = clf.predict(valX)
 
