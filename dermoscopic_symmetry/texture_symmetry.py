@@ -23,11 +23,11 @@ def example(retrain_model=False, sample_name='IMD400'):
     else:
         clf = load_model('PatchClassifierModel')
 
-    # symmetry_info, ratios = texture_symmetry(img, segm, stepAngle=20, classifier=clf)
-    # display_symmetry_axes(img, segm, symmetry_info, title='Texture symmetry')
+    symmetry_info, ratios = texture_symmetry(img, segm, stepAngle=20, classifier=clf)
+    display_symmetry_axes(img, segm, symmetry_info, title='Texture symmetry')
 
     display_similarity_matches(img, segm, patchSize=32, nbBins=4, classifier=clf,
-                               axis_in_degrees=30)
+                               axis_in_degrees=symmetry_info[1][0])
 
 
 def texture_symmetry_predict_patches(classifier, data=None, data_backup_file='FeaturesForPreds'):
@@ -103,7 +103,7 @@ def texture_symmetry(im, segIm, stepAngle, classifier=None):
         rotIm = rotate(im, angle, resize=True, center=centroid)
 
         _, _, _, data = texture_symmetry_features(rotIm, rotSegIm, 32, 4)
-        preds, nonSimilarNum, similarNum = texture_symmetry_predict_patches(classifier)
+        preds, nonSimilarNum, similarNum = texture_symmetry_predict_patches(classifier, data=data)
         simRatios.append(similarNum/(nonSimilarNum+similarNum))
 
     ind = simRatios.index(max(simRatios))

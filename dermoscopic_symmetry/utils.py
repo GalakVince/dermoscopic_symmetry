@@ -153,13 +153,8 @@ def display_similarity_matches(img, segm, patchSize, nbBins, classifier, axis_in
     # Outputs :
         Display the map of similarity.
     """
-    # Compute patches prediction
-    from dermoscopic_symmetry.patches_for_texture_symmetry import texture_symmetry_features
-    from dermoscopic_symmetry.texture_symmetry import texture_symmetry_predict_patches
 
-    patches, points, reference, data = texture_symmetry_features(img, segm, patchSize, nbBins)
-    preds, nonSimilar, similar = texture_symmetry_predict_patches(classifier, data=data)
-
+    # Rotate images
     if axis_in_degrees:
         # Compute center of mass
         segm = img_as_ubyte(segm / 255)
@@ -168,7 +163,7 @@ def display_similarity_matches(img, segm, patchSize, nbBins, classifier, axis_in
         img = rotate(img, angle=axis_in_degrees, center=centroid, mode='symmetric')
         segm = rotate(segm, angle=axis_in_degrees, center=centroid)
 
-    # Rotate and crop images to be centered on the lesion
+    # Crop images to be centered on the lesion
     blkSeg = np.zeros((np.shape(segm)[0] + 2, np.shape(segm)[1] + 2))
     blkSeg[1:np.shape(blkSeg)[0] - 1, 1:np.shape(blkSeg)[1] - 1] = segm
     segm = blkSeg
@@ -186,22 +181,30 @@ def display_similarity_matches(img, segm, patchSize, nbBins, classifier, axis_in
 
     axs[0].axis('off')
     axs[0].imshow(img, cmap=plt.cm.gray)
-    axs[0].set_title('Original')
+    axs[0].set_title('Rotated and cropped')
 
-    draw_similarity_matches(axs[1], img, segm, preds, points, reference)
+    draw_similarity_matches(axs[1], img, segm, patchSize, nbBins, classifier)
+    axs[1].set_title('Similar (green) and different (Red) patches')
 
     plt.show()
 
 
-def draw_similarity_matches(figure_axis, im, segIm, preds, points, reference):
+def draw_similarity_matches(figure_axis, img, segm, patchSize, nbBins, classifier):
+
+    # Compute patches prediction
+    from dermoscopic_symmetry.patches_for_texture_symmetry import texture_symmetry_features
+    from dermoscopic_symmetry.texture_symmetry import texture_symmetry_predict_patches
+
+    patches, points, reference, data = texture_symmetry_features(img, segm, patchSize, nbBins)
+    preds, nonSimilar, similar = texture_symmetry_predict_patches(classifier, data=data)
 
     # Compute center of mass
-    segIm = img_as_ubyte(segIm / 255)
-    properties = regionprops(segIm)
+    segm = img_as_ubyte(segm / 255)
+    properties = regionprops(segm)
     centroid = properties[0].centroid
 
     # Define all necessary variables
-    blend = im.copy()
+    blend = img.copy()
     alpha = 0.6
     blend = img_as_float64(blend)
     patchSize = 32
@@ -210,7 +213,7 @@ def draw_similarity_matches(figure_axis, im, segIm, preds, points, reference):
     # Calculate the real coordinates (in the original image) of points from the lower part
     lowPoints = []
     for pt in points:
-        lowPoints.append([np.shape(im)[0] - pt[0], pt[1]])
+        lowPoints.append([np.shape(img)[0] - pt[0], pt[1]])
 
     if reference == "Upper":
         # If the reference is the upper part, symetric points has to be calculated from points
@@ -223,7 +226,7 @@ def draw_similarity_matches(figure_axis, im, segIm, preds, points, reference):
 
             # Apply green or red circles according to predictions
             if preds[index] == 1:
-                greenFilter = im * 0
+                greenFilter = img * 0
                 greenFilter = img_as_ubyte(greenFilter)
                 # Rectangular shape
                 # greenFilter[point[0]:point[0]+patchSize,point[1]:point[1]+patchSize,1] = 255
@@ -237,7 +240,7 @@ def draw_similarity_matches(figure_axis, im, segIm, preds, points, reference):
                 blend[mask] = blend[mask] * 0.9 + greenFilter[mask] * (1 - alpha)
 
             else:
-                redFilter = im * 0
+                redFilter = img * 0
                 redFilter = img_as_ubyte(redFilter)
                 # Rectangular shape
                 # redFilter[point[0]:point[0]+patchSize,point[1]:point[1]+patchSize,0] = 255
@@ -265,7 +268,7 @@ def draw_similarity_matches(figure_axis, im, segIm, preds, points, reference):
 
             # Apply green or red circles according to predictions
             if preds[index] == 1:
-                greenFilter = im * 0
+                greenFilter = img * 0
                 greenFilter = img_as_ubyte(greenFilter)
                 # Rectangular shape
                 # greenFilter[point[0]:point[0]+patchSize,point[1]:point[1]+patchSize,1] = 255
@@ -279,7 +282,7 @@ def draw_similarity_matches(figure_axis, im, segIm, preds, points, reference):
                 blend[mask] = blend[mask] * 0.9 + greenFilter[mask] * (1 - alpha)
 
             else:
-                redFilter = im * 0
+                redFilter = img * 0
                 redFilter = img_as_ubyte(redFilter)
                 # Rectangular shape
                 # redFilter[point[0]:point[0]+patchSize,point[1]:point[1]+patchSize,0] = 255
@@ -295,12 +298,11 @@ def draw_similarity_matches(figure_axis, im, segIm, preds, points, reference):
             index += 1
 
     figure_axis.axis('off')
-    x = np.linspace(0, np.shape(im)[1])
+    x = np.linspace(0, np.shape(img)[1])
     y = 0 * x + centroid[0]
     plt.plot(x,y,"-b")
     plt.text(5,centroid[0]-5,"Tested axe", fontsize= 10,color="b")
     figure_axis.imshow(blend, cmap=plt.cm.gray)
-    figure_axis.set_title('Similar (green) and different (Red) patches')
 
 
 
