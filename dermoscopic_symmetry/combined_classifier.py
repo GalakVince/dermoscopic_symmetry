@@ -121,11 +121,14 @@ def shape_symmetry_train_classifier(data=None, data_backup_filename='ShapeScores
         clf: The fitted classifier.
         acc: The accuracy score of the classifier
     """
-    data = data or pd.read_csv(f"{package_path()}/data/{data_backup_filename}.csv")
+    if data is not None:
+        data = pd.read_csv(f"{package_path()}/data/patchesDataSet/{data_backup_filename}.csv", index_col=False)
+        features = list(data)
+        del features[0]
+    else:
+        features = list(data)
 
-    features = list(data)
-    del features[0]
-    del features[0]
+    del features[0]     # Delete labels too
 
     trainX = data[features][50:]
     trainy = data.Labels[50:]
@@ -158,12 +161,14 @@ def texture_symmetry_train_classifier(data=None, data_backup_filename='TextureSc
         clf: The fitted classifier.
         acc: The accuracy score of the classifier
     """
+    if data is not None:
+        data = pd.read_csv(f"{package_path()}/data/patchesDataSet/{data_backup_filename}.csv", index_col=False)
+        features = list(data)
+        del features[0]
+    else:
+        features = list(data)
 
-    data = data or pd.read_csv(f"{package_path()}/data/{data_backup_filename}.csv")
-
-    features = list(data)
-    del features[0]
-    del features[0]
+    del features[0]     # Delete labels too
 
     trainX = data[features][50:]
     trainy = data.Labels[50:]
@@ -196,12 +201,14 @@ def combined_symmetry_train_classifier(data=None, data_backup_filename='ShapeAnd
         clf: The fitted classifier.
         acc: The accuracy score of the classifier
     """
+    if data is not None:
+        data = pd.read_csv(f"{package_path()}/data/patchesDataSet/{data_backup_filename}.csv", index_col=False)
+        features = list(data)
+        del features[0]
+    else:
+        features = list(data)
 
-    data = data or pd.read_csv(f"{package_path()}/data/{data_backup_filename}.csv")
-
-    features = list(data)
-    del features[0]
-    del features[0]
+    del features[0]     # Delete labels too
 
     trainX = data[features][50:]
     trainy = data.Labels[50:]

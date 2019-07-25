@@ -338,11 +338,13 @@ def classifierTrainer(maxLeafNodes, data=None, data_backup_file='patchesDataSet/
         clf: The fitted classifier.
         acc: The accuracy score of the classifier
     """
+    if data is not None:
+        data = pd.read_csv(f"{package_path()}/data/patchesDataSet/{data_backup_file}.csv", index_col=False)
+        features = list(data)
+        del features[0]
+    else:
+        features = list(data)
 
-    data = data or pd.read_csv(f"{package_path()}/data/{data_backup_file}.csv")
-
-    features = list(data)
-    del features[0]      # Remove feature index
     del features[-1]     # Remove `Result` colname.
 
     trainX = data[features][500:]

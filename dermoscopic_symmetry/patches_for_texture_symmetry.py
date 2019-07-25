@@ -15,7 +15,7 @@ from dermoscopic_symmetry.utils import load_segmentation, load_dermoscopic, pack
 def example():
     im = load_dermoscopic("IMD400")
     segIm = load_segmentation("IMD400")
-    patchesUsed, points, reference = texture_symmetry_features(im, segIm, 32, 4)
+    patchesUsed, points, reference, data = texture_symmetry_features(im, segIm, 32, 4)
 
 
 def withinLesionPatchesExtractor(image, segImage, patchSize):
@@ -200,9 +200,10 @@ def texture_symmetry_features(im, segIm, patchSize, nbBins, filename_to_save='Fe
         pointsUsed:  The corresponding list of points used. Each point corresponds to the patch's upper
                      left corner.
         reference:   The part of the image taken as reference ("Upper" or "Lower").
+        data:        The dataframe that stores the .csv information.
     """
 
-    num, points, indexes, reference, patches= patchesForClassifier(im, segIm, patchSize)
+    num, points, indexes, reference, patches = patchesForClassifier(im, segIm, patchSize)
     patchesUsed = len(indexes)
 
     dissimilarityLista = []
@@ -350,7 +351,7 @@ def texture_symmetry_features(im, segIm, patchSize, nbBins, filename_to_save='Fe
     if filename_to_save:
         df.to_csv(f"{package_path()}/data/patchesDataSet/{filename_to_save}.csv")
 
-    return (patchesUsed, points, reference)
+    return (patchesUsed, points, reference, df)
 
 
 # Run example() whenever running this script as main

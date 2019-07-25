@@ -23,12 +23,11 @@ def example(retrain_model=False, sample_name='IMD400'):
     else:
         clf = load_model('PatchClassifierModel')
 
-    symmetry_info, ratios = texture_symmetry(img, segm, 5, clf)
+    symmetry_info, ratios = texture_symmetry(img, segm, stepAngle=20, classifier=clf)
     display_symmetry_axes(img, segm, symmetry_info, title='Texture symmetry')
 
-    preds, nonSimilar, similar = texture_symmetry_predict_patches(clf)
-    patches, points, reference = texture_symmetry_features(img, segm, 32, 4)
-    display_similarity_matches(img, segm, preds, points, reference)
+    display_similarity_matches(img, segm, patchSize=32, nbBins=4, classifier=clf,
+                               axis_in_degrees=symmetry_info[1][0])
 
 
 def texture_symmetry_predict_patches(classifier, data=None, data_backup_file='FeaturesForPreds'):
@@ -45,9 +44,12 @@ def texture_symmetry_predict_patches(classifier, data=None, data_backup_file='Fe
         nonSimilarNum: Int. The number of non similar matches.
         similarNum:    Int. The number of similar matches.
     """
-    data = data or pd.read_csv(f"{package_path()}/data/patchesDataSet/{data_backup_file}.csv")
-    features = list(data)
-    del features[0]
+    if data is not None:
+        data = pd.read_csv(f"{package_path()}/data/patchesDataSet/{data_backup_file}.csv", index_col=False)
+        features = list(data)
+        del features[0]
+    else:
+        features = list(data)
 
     toPredict = data[features]
     preds = classifier.predict(toPredict)
@@ -100,7 +102,7 @@ def texture_symmetry(im, segIm, stepAngle, classifier=None):
         centroid = properties[0].centroid
         rotIm = rotate(im, angle, resize=True, center=centroid)
 
-        texture_symmetry_features(rotIm, rotSegIm, 32, 4)
+        _, _, _, data = texture_symmetry_features(rotIm, rotSegIm, 32, 4)
         preds, nonSimilarNum, similarNum = texture_symmetry_predict_patches(classifier)
         simRatios.append(similarNum/(nonSimilarNum+similarNum))
 

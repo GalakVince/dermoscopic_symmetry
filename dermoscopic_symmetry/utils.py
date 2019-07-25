@@ -8,6 +8,7 @@ from skimage import img_as_ubyte, img_as_float64
 from skimage.draw import circle
 from skimage.io import imread
 from skimage.measure import regionprops, find_contours
+from skimage.transform import rotate
 
 
 def load_dermoscopic(imNumber) :
@@ -138,46 +139,61 @@ def draw_symmetry_axes(figure_axis, img, segmentation, symmetry_info):
         figure_axis.set_title("Lesion too large: no symmetry axis")
 
 
-def display_similarity_matches(im, segIm, preds, points, reference):
+def display_similarity_matches(img, segm, patchSize, nbBins, classifier, axis_in_degrees=None):
     """Display the map of similar and non similar matches over the original image thanks to respectively green and red
        circles.
 
     # Arguments :
         im:        The image whose textures symmetry has been evaluated.
-        segIm:     The corresponding segmented image.
+        segm:     The corresponding segmented image.
         preds:     The predictions given by the `symmetryTexturePred()` function.
         points:    The list of points correspondind to used patches in the image (`textureDataExtractor()` function).
         reference: The part of the image taken as a reference ("Upper" or "Lower") (`textureDataExtractor()` function).
-
+        axis_in_degrees: rotation to apply to image before analysis.
     # Outputs :
         Display the map of similarity.
     """
+    # Compute patches prediction
+    from dermoscopic_symmetry.patches_for_texture_symmetry import texture_symmetry_features
+    from dermoscopic_symmetry.texture_symmetry import texture_symmetry_predict_patches
 
-    fig, axs = plt.subplots(1, 2, sharex=True, sharey=True)
-    fig.suptitle("Texture Symmetry", fontsize=20)
+    patches, points, reference, data = texture_symmetry_features(img, segm, patchSize, nbBins)
+    preds, nonSimilar, similar = texture_symmetry_predict_patches(classifier, data=data)
 
-    axs[0].axis('off')
-    axs[0].imshow(im, cmap=plt.cm.gray)
-    axs[0].set_title('Original')
+    if axis_in_degrees:
+        # Compute center of mass
+        segm = img_as_ubyte(segm / 255)
+        properties = regionprops(segm)
+        centroid = properties[0].centroid
+        img = rotate(img, angle=axis_in_degrees, resize=True, center=centroid)
+        segm = rotate(segm, angle=axis_in_degrees, resize=True, center=centroid)
 
-    draw_similarity_matches(axs[1], im, segIm, preds, points, reference)
-
-    plt.show()
-
-
-def draw_similarity_matches(figure_axis, im, segIm, preds, points, reference):
-    # Crop images to be centered on the lesion
-    blkSeg = np.zeros((np.shape(segIm)[0] + 2, np.shape(segIm)[1] + 2))
-    blkSeg[1:np.shape(blkSeg)[0] - 1, 1:np.shape(blkSeg)[1] - 1] = segIm
-    segIm = blkSeg
-    contour = find_contours(segIm, 0)
+    # Rotate and crop images to be centered on the lesion
+    blkSeg = np.zeros((np.shape(segm)[0] + 2, np.shape(segm)[1] + 2))
+    blkSeg[1:np.shape(blkSeg)[0] - 1, 1:np.shape(blkSeg)[1] - 1] = segm
+    segm = blkSeg
+    contour = find_contours(segm, 0)
     cnt = contour[0]
     minx = min(cnt[:, 1])
     maxx = max(cnt[:, 1])
     miny = min(cnt[:, 0])
     maxy = max(cnt[:, 0])
-    segIm = segIm[max(0, int(miny) - 1):int(maxy) + 1, max(0, int(minx) - 1):int(maxx) + 1]
-    im = im[max(0, int(miny) - 1):int(maxy), max(0, int(minx) - 1):int(maxx) + 1]
+    segm = segm[max(0, int(miny) - 1):int(maxy) + 1, max(0, int(minx) - 1):int(maxx) + 1]
+    img = img[max(0, int(miny) - 1):int(maxy), max(0, int(minx) - 1):int(maxx) + 1]
+
+    fig, axs = plt.subplots(1, 2, sharex=True, sharey=True)
+    fig.suptitle("Texture Symmetry", fontsize=20)
+
+    axs[0].axis('off')
+    axs[0].imshow(img, cmap=plt.cm.gray)
+    axs[0].set_title('Original')
+
+    draw_similarity_matches(axs[1], img, segm, preds, points, reference)
+
+    plt.show()
+
+
+def draw_similarity_matches(figure_axis, im, segIm, preds, points, reference):
 
     # Compute center of mass
     segIm = img_as_ubyte(segIm / 255)
