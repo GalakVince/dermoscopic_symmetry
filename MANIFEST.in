@@ -1,8 +1,8 @@
-include *.csv
-include *.pkl
-include patchesDataSet/*
-include patchesDataSet/nonSimilar/*
-include patchesDataSet/Similar/*
+include dermoscopic_symmetry/data/*.csv
+include dermoscopic_symmetry/data/models/*.pkl
+include dermoscopic_symmetry/data/patchesDataSet/*
+include dermoscopic_symmetry/data/patchesDataSet/nonSimilar/*
+include dermoscopic_symmetry/data/patchesDataSet/Similar/*
 include symtab.xlsx
 include README.md
 
