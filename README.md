@@ -46,23 +46,15 @@ according to expert diagnose in the PH² Dataset.
 `ShapeAndTextureScores.csv` files contained in the `data` repository. The final models are saved as `shapeModel.pkl`, `textureModel.pkl` and 
 `shapeAndTextureModel.pkl` in the `data/models` repository.
 
+**Note :** The code used to create the 
+patchesDataSet is given in the **`patches_dataset_creator.py`** file. The **`utils.py`** file contains the utilities 
+functions.
+
  ## Usage
 
 Each code script has an :
-`example()` function at the beginning 
-
-
-at the end aiming at showing how to use the designed functions. <br/>The code used to create the 
-patchesDataSet is given in the **`patches_dataset_creator.py`** file. The **`utils.py`** contains the utilities 
-functions.
-
-**Note :** To use the dataset creator functions, a `symtab.xlsx` file must be construct and add 
-to the same repository level as the `*.pkl` files are (package's top level). This file is
-an excel file containing two columns : the first contains all 
-the "Image Name" column of the `PH2_dataset.xlsx` file (available once the PH² Dataset has
-been downloaded) and the second one contains all the "Asymmetry"
-column of the `PH2_dataset.xlsx` file.
-
+`example()` function at the beginning aiming at presenting its functionalities. This function is run
+as a default `main`.
 
 ## License
 
