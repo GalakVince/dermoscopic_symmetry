@@ -13,7 +13,8 @@ def example():
     segmentation = load_segmentation("IMD400")
     symmetry_info = shape_symmetry(segmentation, angle_step=9)
     print(f'Symmetry info: {symmetry_info}')
-    display_symmetry_axes(dermoscopic, segmentation, symmetry_info)
+    display_symmetry_axes(dermoscopic, segmentation, symmetry_info,
+                          title='Shape symmetry')
 
 
 def shape_symmetry_ratios(segmentation, angle_step=9):

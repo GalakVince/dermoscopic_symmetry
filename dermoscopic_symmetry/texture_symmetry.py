@@ -8,7 +8,7 @@ from skimage.transform import rotate
 from dermoscopic_symmetry.classifier_feeder import classifierTrainer, dataExtractorForTraining
 from dermoscopic_symmetry.patches_for_texture_symmetry import texture_symmetry_features
 from dermoscopic_symmetry.utils import load_dermoscopic, load_segmentation, displayTextureSymmetry, package_path, \
-    displaySimilarityMatches
+    displaySimilarityMatches, display_symmetry_axes
 
 
 def example(create_features=True):
@@ -24,7 +24,7 @@ def example(create_features=True):
         raise NotImplementedError
 
     res, ratios = texture_symmetry(im, segIm, 5)
-    displayTextureSymmetry(im, segIm, res)
+    display_symmetry_axes(im, segIm, res, title='Texture symmetry')
 
     preds, nonSimilar, similar = texture_symmetry_predict_patches(clf)
     patches, points, reference = texture_symmetry_features(im, segIm, 32, 4)

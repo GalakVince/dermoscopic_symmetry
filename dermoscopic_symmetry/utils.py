@@ -10,99 +10,6 @@ from skimage.io import imread
 from skimage.measure import regionprops, find_contours
 
 
-def display_symmetry_axes(img, segmentation, symmetry_info):
-    """Display the axis of symmetry of an image, considering shape symmetry.
-
-    # Arguments :
-        img:       The image whose shape symmetry has been evaluated with the symmetryShapeEval() function.
-        segmentation:    The corresponding segmented image.
-        symmetry_info: The output of the symmetryShapeEval() function used on `im`.
-    """
-
-    fig, axs = plt.subplots(1, 3, sharex=True, sharey=True)
-    fig.suptitle("Shape Symmetry", fontsize=20)
-
-    properties = regionprops(segmentation)
-    centroid = properties[0].centroid
-
-
-
-    if symmetry_info[0] == 0:
-        pente = np.tan(symmetry_info[1][0] * np.pi / 180)
-        ordOrig = centroid[0] - pente * centroid[1]
-        x = np.linspace(0, np.shape(segmentation)[1])
-        y = pente * x + ordOrig
-
-        penteOrtho = np.tan(symmetry_info[2][0] * np.pi / 180)
-        ordOrigOrtho = centroid[0] - penteOrtho * centroid[1]
-        xOrtho = np.linspace(0, np.shape(segmentation)[1])
-        yOrtho = penteOrtho * x + ordOrigOrtho
-
-        axs[0].axis('off')
-        axs[0].imshow(img, cmap=plt.cm.gray)
-        axs[0].set_title('Input image')
-
-        axs[1].axis('off')
-        axs[1].imshow(segmentation, cmap=plt.cm.gray)
-        axs[1].set_title('Segmented image')
-
-        axs[2].plot(x, y, "-r", linewidth=2)
-        axs[2].plot(xOrtho, yOrtho, "-r", linewidth=0.8)
-        axs[2].imshow(segmentation, cmap=plt.cm.gray)
-        axs[2].set_title("Main and secondary symmetry axes")
-        axs[2].axis("off")
-        plt.show()
-
-    elif symmetry_info[0] == 1:
-        pente = np.tan(symmetry_info[1][0] * np.pi / 180)
-        ordOrig = centroid[0] - pente * centroid[1]
-        x = np.linspace(0, np.shape(segmentation)[1])
-        y = pente * x + ordOrig
-
-        axs[0].axis('off')
-        axs[0].imshow(img, cmap=plt.cm.gray)
-        axs[0].set_title('Input image')
-
-        axs[1].axis('off')
-        axs[1].imshow(segmentation, cmap=plt.cm.gray)
-        axs[1].set_title('Segmented image')
-
-        axs[2].plot(x, y, "-r")
-        axs[2].imshow(segmentation, cmap=plt.cm.gray)
-        axs[2].set_title("Main symmetry axis")
-        axs[2].axis("off")
-        plt.show()
-
-    elif symmetry_info[0] == 2:
-
-        axs[0].axis('off')
-        axs[0].imshow(img, cmap=plt.cm.gray)
-        axs[0].set_title('Input image')
-
-        axs[1].axis('off')
-        axs[1].imshow(segmentation, cmap=plt.cm.gray)
-        axs[1].set_title('Segmented image')
-
-        axs[2].imshow(segmentation, cmap=plt.cm.gray)
-        axs[2].set_title("No symmetry axis")
-        axs[2].axis("off")
-        plt.show()
-
-    else:
-        axs[0].axis('off')
-        axs[0].imshow(img, cmap=plt.cm.gray)
-        axs[0].set_title('Input image')
-
-        axs[1].axis('off')
-        axs[1].imshow(segmentation, cmap=plt.cm.gray)
-        axs[1].set_title('Segmented image')
-
-        axs[2].imshow(segmentation, cmap=plt.cm.gray)
-        axs[2].set_title("Lesion too large: no symmetry axis")
-        axs[2].axis("off")
-        plt.show()
-
-
 def load_dermoscopic(imNumber) :
     """Load a dermoscopic image from the PH2 Dataset.
 
@@ -164,6 +71,96 @@ def load_PH2_asymmetry_GT():
 
 def package_path():
     return os.path.dirname(os.path.abspath(__file__))
+
+
+def display_symmetry_axes(img, segmentation, symmetry_info, title='Symmetry Axes'):
+    """Display the axis of symmetry of an image, considering shape symmetry.
+
+    # Arguments :
+        img:       The image whose shape symmetry has been evaluated with the symmetryShapeEval() function.
+        segmentation:    The corresponding segmented image.
+        symmetry_info: The output of the symmetryShapeEval() function used on `im`.
+    """
+
+    fig, axs = plt.subplots(1, 3, sharex=True, sharey=True)
+    fig.suptitle(title, fontsize=20)
+
+    properties = regionprops(segmentation)
+    centroid = properties[0].centroid
+
+    if symmetry_info[0] == 0:
+        pente = np.tan(symmetry_info[1][0] * np.pi / 180)
+        ordOrig = centroid[0] - pente * centroid[1]
+        x = np.linspace(0, np.shape(segmentation)[1])
+        y = pente * x + ordOrig
+
+        penteOrtho = np.tan(symmetry_info[2][0] * np.pi / 180)
+        ordOrigOrtho = centroid[0] - penteOrtho * centroid[1]
+        xOrtho = np.linspace(0, np.shape(segmentation)[1])
+        yOrtho = penteOrtho * x + ordOrigOrtho
+
+        axs[0].axis('off')
+        axs[0].imshow(img, cmap=plt.cm.gray)
+        axs[0].set_title('Input image')
+
+        axs[1].axis('off')
+        axs[1].imshow(segmentation, cmap=plt.cm.gray)
+        axs[1].set_title('Segmented image')
+
+        axs[2].plot(x, y, "-r", linewidth=2)
+        axs[2].plot(xOrtho, yOrtho, "-r", linewidth=0.8)
+        axs[2].imshow(segmentation, cmap=plt.cm.gray)
+        axs[2].set_title("Main and secondary symmetry axes")
+        axs[2].axis("off")
+        plt.show()
+
+    elif symmetry_info[0] == 1:
+        pente = np.tan(symmetry_info[1][0] * np.pi / 180)
+        ordOrig = centroid[0] - pente * centroid[1]
+        x = np.linspace(0, np.shape(segmentation)[1])
+        y = pente * x + ordOrig
+
+        axs[0].axis('off')
+        axs[0].imshow(img, cmap=plt.cm.gray)
+        axs[0].set_title('Input image')
+
+        axs[1].axis('off')
+        axs[1].imshow(segmentation, cmap=plt.cm.gray)
+        axs[1].set_title('Segmented image')
+
+        axs[2].plot(x, y, "-r")
+        axs[2].imshow(segmentation, cmap=plt.cm.gray)
+        axs[2].set_title("Main symmetry axis")
+        axs[2].axis("off")
+        plt.show()
+
+    elif symmetry_info[0] == 2:
+        axs[0].axis('off')
+        axs[0].imshow(img, cmap=plt.cm.gray)
+        axs[0].set_title('Input image')
+
+        axs[1].axis('off')
+        axs[1].imshow(segmentation, cmap=plt.cm.gray)
+        axs[1].set_title('Segmented image')
+
+        axs[2].imshow(segmentation, cmap=plt.cm.gray)
+        axs[2].set_title("No symmetry axis")
+        axs[2].axis("off")
+        plt.show()
+
+    else:
+        axs[0].axis('off')
+        axs[0].imshow(img, cmap=plt.cm.gray)
+        axs[0].set_title('Input image')
+
+        axs[1].axis('off')
+        axs[1].imshow(segmentation, cmap=plt.cm.gray)
+        axs[1].set_title('Segmented image')
+
+        axs[2].imshow(segmentation, cmap=plt.cm.gray)
+        axs[2].set_title("Lesion too large: no symmetry axis")
+        axs[2].axis("off")
+        plt.show()
 
 
 def displayTextureSymmetry(im, segIm, symmetry):
