@@ -49,12 +49,8 @@ according to expert diagnose in the PH² Dataset.
  ## Usage
 
 Each code script has an :
-```python
-#--------EXAMPLE--------
-# 
-# 
-#-----------------------
-```
+`example()` function at the beginning 
+
 
 at the end aiming at showing how to use the designed functions. <br/>The code used to create the 
 patchesDataSet is given in the **`patches_dataset_creator.py`** file. The **`utils.py`** contains the utilities 
