@@ -7,7 +7,7 @@ from skimage.transform import rotate
 
 from dermoscopic_symmetry.classifier_feeder import classifierTrainer, dataExtractorForTraining
 from dermoscopic_symmetry.patches_for_texture_symmetry import texture_symmetry_features
-from dermoscopic_symmetry.utils import load_dermoscopic, load_segmentation, displayTextureSymmetry, package_path, \
+from dermoscopic_symmetry.utils import load_dermoscopic, load_segmentation, package_path, \
     display_similarity_matches, display_symmetry_axes, load_model
 
 
