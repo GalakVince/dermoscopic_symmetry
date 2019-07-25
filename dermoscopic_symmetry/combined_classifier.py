@@ -4,7 +4,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 
 from dermoscopic_symmetry.shape_symmetry import shape_symmetry_ratios
-from dermoscopic_symmetry.texture_symmetry import symmetryTextureEval
+from dermoscopic_symmetry.texture_symmetry import texture_symmetry
 from dermoscopic_symmetry.utils import package_path, load_PH2_asymmetry_GT, load_segmentation, load_dermoscopic, \
     save_model, load_model
 
@@ -92,7 +92,7 @@ def texture_symmetry_scores(stepAngle=9, filename_to_save='TextureScores'):
         print(im, " : ",c + 1, "/200")
         segIm = load_segmentation(im)
         im = load_dermoscopic(im)
-        res, ratios = symmetryTextureEval(im, segIm, stepAngle)
+        res, ratios = texture_symmetry(im, segIm, stepAngle)
         for k in range(len(ratios)):
             lists[k].append(ratios[k])
         c += 1
@@ -114,18 +114,21 @@ def shape_symmetry_train_classifier(data=None, data_backup_filename='ShapeScores
 
     # Arguments :
         data:   As returned by the shape_symmetry_scores function (optional).
-        backup_filename:   Only if data is None, file to load data from.
+        data_backup_filename:   Only if data is None, file to load data from.
         filename_to_save_model: String or None.
 
     # Outputs :
         clf: The fitted classifier.
         acc: The accuracy score of the classifier
     """
-    data = data or pd.read_csv(f"{package_path()}/data/{data_backup_filename}.csv")
+    if data is None:
+        data = pd.read_csv(f"{package_path()}/data/patchesDataSet/{data_backup_filename}.csv", index_col=False)
+        features = list(data)
+        del features[0]
+    else:
+        features = list(data)
 
-    features = list(data)
-    del features[0]
-    del features[0]
+    del features[0]     # Delete labels too
 
     trainX = data[features][50:]
     trainy = data.Labels[50:]
@@ -158,12 +161,14 @@ def texture_symmetry_train_classifier(data=None, data_backup_filename='TextureSc
         clf: The fitted classifier.
         acc: The accuracy score of the classifier
     """
+    if data is None:
+        data = pd.read_csv(f"{package_path()}/data/patchesDataSet/{data_backup_filename}.csv", index_col=False)
+        features = list(data)
+        del features[0]
+    else:
+        features = list(data)
 
-    data = data or pd.read_csv(f"{package_path()}/data/{data_backup_filename}.csv")
-
-    features = list(data)
-    del features[0]
-    del features[0]
+    del features[0]     # Delete labels too
 
     trainX = data[features][50:]
     trainy = data.Labels[50:]
@@ -196,12 +201,14 @@ def combined_symmetry_train_classifier(data=None, data_backup_filename='ShapeAnd
         clf: The fitted classifier.
         acc: The accuracy score of the classifier
     """
+    if data is None:
+        data = pd.read_csv(f"{package_path()}/data/patchesDataSet/{data_backup_filename}.csv", index_col=False)
+        features = list(data)
+        del features[0]
+    else:
+        features = list(data)
 
-    data = data or pd.read_csv(f"{package_path()}/data/{data_backup_filename}.csv")
-
-    features = list(data)
-    del features[0]
-    del features[0]
+    del features[0]     # Delete labels too
 
     trainX = data[features][50:]
     trainy = data.Labels[50:]
