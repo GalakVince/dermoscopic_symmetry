@@ -15,7 +15,7 @@ from dermoscopic_symmetry.utils import load_segmentation, load_dermoscopic, pack
 def example():
     im = load_dermoscopic("IMD400")
     segIm = load_segmentation("IMD400")
-    patchesUsed, points, reference = textureDataExtractor(im, segIm, 32, 4)
+    patchesUsed, points, reference = texture_symmetry_features(im, segIm, 32, 4)
 
 
 def withinLesionPatchesExtractor(image, segImage, patchSize):
@@ -181,7 +181,7 @@ def patchesForClassifier(im, segIm, patchSize):
     return (n,pointsUsed,indexes,reference, patches)
 
 
-def textureDataExtractor(im, segIm, patchSize, nbBins):
+def texture_symmetry_features(im, segIm, patchSize, nbBins, filename_to_save='FeaturesForPreds'):
     """Extract gray level co-occurence matrix's features (dissimilarity, correlation, energy, contrast and homogeneity)
        and color feature (color histogram for each RGB's channel) from patches taken in a dermoscopic image and stored
        in the "patchesDataSet" folder and store them ("featuresForPreds.csv" in the same folder).
@@ -192,6 +192,7 @@ def textureDataExtractor(im, segIm, patchSize, nbBins):
         patchSize: Int. The size of the patches taken. For example, if `patchSize` = 32, the function takes
                    32*32 patches.
         nbBins:    Int. The number of bins wanted to divide color histogram.
+        filename_to_save: String or None.
 
     # Outputs :
         patchesUsed: The number of patches effectively kept during the use of `patchesForClassifier()`
@@ -346,7 +347,8 @@ def textureDataExtractor(im, segIm, patchSize, nbBins):
             df["blue " + str(k + 1 - 5*nbBins) + "/" + str(nbBins) + " b"] = lists[k]
 
     # Create .csv file
-    df.to_csv(f"{package_path()}/data/patchesDataSet/featuresForPreds.csv")
+    if filename_to_save:
+        df.to_csv(f"{package_path()}/data/patchesDataSet/{filename_to_save}.csv")
 
     return (patchesUsed, points, reference)
 

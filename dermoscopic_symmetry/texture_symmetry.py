@@ -1,15 +1,14 @@
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from skimage import img_as_float64, img_as_ubyte
-from skimage.draw import circle
+from skimage import img_as_ubyte
 from skimage.filters import threshold_otsu
-from skimage.measure import regionprops, find_contours
+from skimage.measure import regionprops
 from skimage.transform import rotate
 
 from dermoscopic_symmetry.classifier_feeder import classifierTrainer, dataExtractorForTraining
-from dermoscopic_symmetry.patches_for_texture_symmetry import textureDataExtractor
-from dermoscopic_symmetry.utils import load_dermoscopic, load_segmentation, displayTextureSymmetry, package_path
+from dermoscopic_symmetry.patches_for_texture_symmetry import texture_symmetry_features
+from dermoscopic_symmetry.utils import load_dermoscopic, load_segmentation, displayTextureSymmetry, package_path, \
+    displaySimilarityMatches
 
 
 def example(create_features=True):
@@ -24,27 +23,29 @@ def example(create_features=True):
     else:
         raise NotImplementedError
 
-    res, ratios = symmetryTextureEval(im, segIm, 5)
+    res, ratios = texture_symmetry(im, segIm, 5)
     displayTextureSymmetry(im, segIm, res)
 
-    preds, nonSimilar, similar = symmetryTexturePred(clf)
-    patches, points, reference = textureDataExtractor(im, segIm, 32, 4)
+    preds, nonSimilar, similar = texture_symmetry_predict_patches(clf)
+    patches, points, reference = texture_symmetry_features(im, segIm, 32, 4)
     displaySimilarityMatches(im, segIm, preds, points, reference)
 
 
-def symmetryTexturePred(classifier):
+def texture_symmetry_predict_patches(classifier, data=None, data_backup_file='FeaturesForPreds'):
     """Predict if symetric pairs of patches taken in a dermoscopic image are similar or not using features extracted
-       with the `textureDataExtractor()` function and stored in the "featureForPreds.csv" file.
+       with the `texture_symmetry_features()` function and stored in the "FeatureForPreds.csv" file.
 
     # Arguments :
         classifier:  The trained random forest classifier (with patchesDataSet).
+        data:   As returned by the texture_symmetry_features function (optional).
+        data_backup_filename:   Only if data is None, file to load data from.
 
     # Outputs :
         preds:         The predictions (0 if non similar, 1 if similar).
         nonSimilarNum: Int. The number of non similar matches.
         similarNum:    Int. The number of similar matches.
     """
-    data = pd.read_csv(f"{package_path()}/data/patchesDataSet/featuresForPreds.csv")
+    data = data or pd.read_csv(f"{package_path()}/data/patchesDataSet/{data_backup_file}.csv")
     features = list(data)
     del features[0]
 
@@ -57,7 +58,7 @@ def symmetryTexturePred(classifier):
     return preds, nonSimilarNum, similarNum
 
 
-def symmetryTextureEval(im, segIm, stepAngle):
+def texture_symmetry(im, segIm, stepAngle):
     """Evaluate the textures symmetry of an image over a range of angles from 0 to 180 degrees. There are 3
        possibilities : symmetric (at least 2 axis), not fully symmetric (1-axis symmetry), or asymmetric.
 
@@ -97,8 +98,8 @@ def symmetryTextureEval(im, segIm, stepAngle):
         centroid = properties[0].centroid
         rotIm = rotate(im, angle, resize=True, center=centroid)
 
-        textureDataExtractor(rotIm, rotSegIm, 32, 4)
-        preds, nonSimilarNum, similarNum = symmetryTexturePred(classifier)
+        texture_symmetry_features(rotIm, rotSegIm, 32, 4)
+        preds, nonSimilarNum, similarNum = texture_symmetry_predict_patches(classifier)
         simRatios.append(similarNum/(nonSimilarNum+similarNum))
 
     ind = simRatios.index(max(simRatios))
@@ -127,152 +128,6 @@ def symmetryTextureEval(im, segIm, stepAngle):
         res = [1, [ind * stepAngle, simRatios[ind]], [None,None]]
 
     return (res,simRatios)
-
-
-def displaySimilarityMatches(im, segIm, preds, points, reference):
-    """Display the map of similar and non similar matches over the original image thanks to respectively green and red
-       circles.
-
-    # Arguments :
-        im:        The image whose textures symmetry has been evaluated.
-        segIm:     The corresponding segmented image.
-        preds:     The predictions given by the `symmetryTexturePred()` function.
-        points:    The list of points correspondind to used patches in the image (`textureDataExtractor()` function).
-        reference: The part of the image taken as a reference ("Upper" or "Lower") (`textureDataExtractor()` function).
-
-    # Outputs :
-        Display the map of similarity.
-    """
-
-    # Crop images to be centered on the lesion
-    blkSeg = np.zeros((np.shape(segIm)[0]+2,np.shape(segIm)[1]+2))
-    blkSeg[1:np.shape(blkSeg)[0]-1,1:np.shape(blkSeg)[1]-1] = segIm
-    segIm = blkSeg
-    contour = find_contours(segIm, 0)
-    cnt = contour[0]
-    minx = min(cnt[:, 1])
-    maxx = max(cnt[:, 1])
-    miny = min(cnt[:, 0])
-    maxy = max(cnt[:, 0])
-    segIm = segIm[max(0, int(miny)-1):int(maxy)+1, max(0, int(minx)-1):int(maxx)+1]
-    im = im[max(0, int(miny)-1):int(maxy), max(0, int(minx)-1):int(maxx)+1]
-
-    # Compute center of mass
-    segIm = img_as_ubyte(segIm/255)
-    properties = regionprops(segIm)
-    centroid = properties[0].centroid
-
-
-
-    # Define all necessary variables
-    blend = im.copy()
-    alpha = 0.6
-    blend = img_as_float64(blend)
-    patchSize = 32
-    index = 0
-
-    # Calculate the real coordinates (in the original image) of points from the lower part
-    lowPoints = []
-    for pt in points:
-        lowPoints.append([np.shape(im)[0] - pt[0], pt[1]])
-
-
-    if reference == "Upper":
-
-        # If the reference is the upper part, symetric points has to be calculated from points
-        for point in points:
-            rrUp, ccUp = circle(point[0] - 0.5 + int(patchSize / 2), point[1] - 0.5 + int(patchSize / 2), int(patchSize / 2))
-            symPoint = [point[0] + 2*(abs(centroid[0]-point[0])), point[1]]
-            rrLow, ccLow = circle(symPoint[0] + 0.5 - int(patchSize/2), symPoint[1] - 0.5 + int(patchSize/2),int(patchSize/2))
-
-            # Apply green or red circles according to predictions
-            if preds[index] == 1 :
-                greenFilter = im * 0
-                greenFilter = img_as_ubyte(greenFilter)
-                # Rectangular shape
-                # greenFilter[point[0]:point[0]+patchSize,point[1]:point[1]+patchSize,1] = 255
-                # Circular shape
-                greenFilter[rrLow, ccLow, 1] = 200
-                greenFilter[rrUp, ccUp, 1] = 200
-
-                greenFilter = img_as_float64(greenFilter)
-                mask = greenFilter != 0
-
-                blend[mask] = blend[mask]*0.9 + greenFilter[mask] * (1-alpha)
-
-            else :
-                redFilter = im * 0
-                redFilter = img_as_ubyte(redFilter)
-                # Rectangular shape
-                # redFilter[point[0]:point[0]+patchSize,point[1]:point[1]+patchSize,0] = 255
-                # Circular shape
-                redFilter[rrLow, ccLow, 0] = 200
-                redFilter[rrUp, ccUp, 0] = 200
-
-                redFilter = img_as_float64(redFilter)
-
-                mask = redFilter != 0
-
-                blend[mask] = blend[mask] * 0.9 + redFilter[mask] * (1 - alpha)
-
-            index += 1
-
-    else:
-
-        # If the reference is the lower part, symetric points has to be calculated from lowPoints
-        for point in lowPoints:
-            rrLow,ccLow = circle(point[0] + 0.5 - int(patchSize/2), point[1] - 0.5 + int(patchSize/2),int(patchSize/2))
-            symPoint = [point[0] - 2 * (abs(centroid[0] - point[0])), point[1]]
-            rrUp, ccUp = circle(symPoint[0] - 0.5 + int(patchSize/2), symPoint[1] - 0.5 + int(patchSize/2),int(patchSize/2))
-
-            # Apply green or red circles according to predictions
-            if preds[index] == 1 :
-                greenFilter = im * 0
-                greenFilter=img_as_ubyte(greenFilter)
-                # Rectangular shape
-                # greenFilter[point[0]:point[0]+patchSize,point[1]:point[1]+patchSize,1] = 255
-                # Circular shape
-                greenFilter[rrLow, ccLow, 1] = 200
-                greenFilter[rrUp, ccUp, 1] = 200
-
-                greenFilter = img_as_float64(greenFilter)
-                mask = greenFilter != 0
-
-                blend[mask] = blend[mask]*0.9 + greenFilter[mask] * (1-alpha)
-
-            else :
-                redFilter = im * 0
-                redFilter = img_as_ubyte(redFilter)
-                # Rectangular shape
-                # redFilter[point[0]:point[0]+patchSize,point[1]:point[1]+patchSize,0] = 255
-                # Circular shape
-                redFilter[rrLow, ccLow, 0] = 200
-                redFilter[rrUp, ccUp, 0] = 200
-
-                redFilter = img_as_float64(redFilter)
-                mask = redFilter != 0
-
-                blend[mask] = blend[mask] * 0.9 + redFilter[mask] * (1 - alpha)
-
-            index += 1
-
-    # Display original image and the map with the axis tested in blue
-    fig, axs = plt.subplots(1, 2, sharex=True, sharey=True)
-    fig.suptitle("Texture Symmetry", fontsize=20)
-
-    axs[0].axis('off')
-    axs[0].imshow(im, cmap=plt.cm.gray)
-    axs[0].set_title('Input image for textures symmetry')
-
-    axs[1].axis('off')
-    x = np.linspace(0, np.shape(im)[1])
-    y = 0 * x + centroid[0]
-    plt.plot(x,y,"-b")
-    plt.text(5,centroid[0]-5,"Tested axe", fontsize= 10,color="b")
-    axs[1].imshow(blend, cmap=plt.cm.gray)
-    axs[1].set_title('Similar matches (green) and non similar matches (red)')
-
-    plt.show()
 
 
 # Run example() whenever running this script as main
