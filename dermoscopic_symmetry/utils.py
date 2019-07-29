@@ -205,7 +205,7 @@ def draw_similarity_matches(figure_axis, img, segm, patchSize, nbBins, classifie
 
     # Define all necessary variables
     blend = img.copy()
-    alpha = 0.6
+    alpha = 0.4
     blend = img_as_float64(blend)
     patchSize = 32
     index = 0
@@ -224,6 +224,13 @@ def draw_similarity_matches(figure_axis, img, segm, patchSize, nbBins, classifie
             rrLow, ccLow = circle(symPoint[0] + 0.5 - int(patchSize / 2), symPoint[1] - 0.5 + int(patchSize / 2),
                                   int(patchSize / 2))
 
+            valid_points_low = (0 <= rrLow) & (rrLow < img.shape[0]) & (0 <= ccLow) & (ccLow < img.shape[1])
+            rrLow = rrLow[valid_points_low]
+            ccLow = ccLow[valid_points_low]
+            valid_points_upp = (0 <= rrUp) & (rrUp < img.shape[0]) & (0 <= ccUp) & (ccUp < img.shape[1])
+            rrUp = rrUp[valid_points_upp]
+            ccUp = ccUp[valid_points_upp]
+
             # Apply green or red circles according to predictions
             if preds[index] == 1:
                 greenFilter = img * 0
@@ -237,7 +244,7 @@ def draw_similarity_matches(figure_axis, img, segm, patchSize, nbBins, classifie
                 greenFilter = img_as_float64(greenFilter)
                 mask = greenFilter != 0
 
-                blend[mask] = blend[mask] * 0.9 + greenFilter[mask] * (1 - alpha)
+                blend[mask] = blend[mask] * alpha + greenFilter[mask] * (1 - alpha)
 
             else:
                 redFilter = img * 0
@@ -252,13 +259,13 @@ def draw_similarity_matches(figure_axis, img, segm, patchSize, nbBins, classifie
 
                 mask = redFilter != 0
 
-                blend[mask] = blend[mask] * 0.9 + redFilter[mask] * (1 - alpha)
+                blend[mask] = blend[mask] * alpha + redFilter[mask] * (1 - alpha)
 
             index += 1
 
     else:
 
-        # If the reference is the lower part, symetric points has to be calculated from lowPoints
+        # If the reference is the lower part, symmetric points have to be calculated from lowPoints
         for point in lowPoints:
             rrLow, ccLow = circle(point[0] + 0.5 - int(patchSize / 2), point[1] - 0.5 + int(patchSize / 2),
                                   int(patchSize / 2))
@@ -266,6 +273,13 @@ def draw_similarity_matches(figure_axis, img, segm, patchSize, nbBins, classifie
             rrUp, ccUp = circle(symPoint[0] - 0.5 + int(patchSize / 2), symPoint[1] - 0.5 + int(patchSize / 2),
                                 int(patchSize / 2))
 
+            valid_points_low = (0 <= rrLow) & (rrLow < img.shape[0]) & (0 <= ccLow) & (ccLow < img.shape[1])
+            rrLow = rrLow[valid_points_low]
+            ccLow = ccLow[valid_points_low]
+            valid_points_upp = (0 <= rrUp) & (rrUp < img.shape[0]) & (0 <= ccUp) & (ccUp < img.shape[1])
+            rrUp = rrUp[valid_points_upp]
+            ccUp = ccUp[valid_points_upp]
+
             # Apply green or red circles according to predictions
             if preds[index] == 1:
                 greenFilter = img * 0
@@ -279,7 +293,7 @@ def draw_similarity_matches(figure_axis, img, segm, patchSize, nbBins, classifie
                 greenFilter = img_as_float64(greenFilter)
                 mask = greenFilter != 0
 
-                blend[mask] = blend[mask] * 0.9 + greenFilter[mask] * (1 - alpha)
+                blend[mask] = blend[mask] * alpha + greenFilter[mask] * (1 - alpha)
 
             else:
                 redFilter = img * 0
@@ -293,7 +307,7 @@ def draw_similarity_matches(figure_axis, img, segm, patchSize, nbBins, classifie
                 redFilter = img_as_float64(redFilter)
                 mask = redFilter != 0
 
-                blend[mask] = blend[mask] * 0.9 + redFilter[mask] * (1 - alpha)
+                blend[mask] = blend[mask] * alpha + redFilter[mask] * (1 - alpha)
 
             index += 1
 
@@ -301,5 +315,5 @@ def draw_similarity_matches(figure_axis, img, segm, patchSize, nbBins, classifie
     x = np.linspace(0, np.shape(img)[1])
     y = 0 * x + centroid[0]
     plt.plot(x,y,"-b")
-    plt.text(5,centroid[0]-5,"Tested axe", fontsize= 10,color="b")
+    plt.text(5,centroid[0]-5, "Tested axe", fontsize= 10, color="b")
     figure_axis.imshow(blend, cmap=plt.cm.gray)
